@@ -1,0 +1,73 @@
+{
+	"name": "Unattended upgrades",
+	"id": "unattended_upgrades",
+	"packaging_format": 1,
+	"description": {
+		"en": "Description",
+		"fr": "Description"
+	},
+	"version": "1.0~ynh1",
+	"url": "http://www.site",
+	"license": "free",
+	"maintainer": {
+		"name": "Maniack Crudelis",
+		"email": "maniackc_dev@crudelis.fr"
+	},
+	"requirements": {
+		"yunohost": ">= 2.7.2"
+	},
+	"multi_instance": false,
+	"services": [],
+	"arguments": {
+		"install" : [
+			{
+				"name": "upgrade_level",
+				"ask": {
+					"en": "Choose the sources of packages to automatically upgrade"
+				},
+				"choices": ["Security only", "Security and updates"],
+				"default": "Security only"
+			},
+			{
+				"name": "ynh_update",
+				"ask": {
+					"en": "Would you like to update YunoHost packages automatically ?"
+				},
+				"default": true
+			},
+			{
+				"name": "previous_apticron",
+				"ask": {
+					"en": "Would you like to receive an email to inform which upgrades need to be done ?"
+				},
+				"default": true
+			},
+			{
+				"name": "after_apticron",
+				"ask": {
+					"en": "Would you like to receive an email to verify if there any upgrades left after each auto upgrade ?"
+				},
+				"default": true
+			},
+			{
+				"name": "unattended_mail",
+				"ask": {
+					"en": "Would you like to receive an email from Unattended-Upgrades ?"
+				},
+				"choices": ["If an upgrade has been done", "Only if there was an error", "Never"],
+				"default": "If an upgrade has been done"
+			},
+			{
+				"name": "unattended_verbosity",
+				"ask": {
+					"en": "Choose the level of verbosity of unattended_upgrades mail"
+				},
+				"help": {
+					"en": "1: Progress report only.<br>2: Progress report and command outputs.<br>3: Progress report and command outputs and trace.<br>"
+				},
+				"choices": ["1", "2", "3"],
+				"default": "2"
+			},
+		]
+	}
+}
