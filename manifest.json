@@ -31,27 +31,30 @@
 			},
 			{
 				"name": "ynh_update",
+				"type": "boolean",
 				"ask": {
 					"en": "Would you like to update YunoHost packages automatically ?",
 					"fr": "Souhaitez-vous mettre à jour les paquets YunoHost automatiquement ?"
 				},
-				"default": 1
+				"default": true
 			},
 			{
 				"name": "previous_apticron",
+				"type": "boolean",
 				"ask": {
 					"en": "Would you like to receive an email to inform which upgrades need to be done ?",
 					"fr": "Souhaitez-vous recevoir un email pour vous informer des mises à jour nécessaires ?"
 				},
-				"default": 1
+				"default": true
 			},
 			{
 				"name": "after_apticron",
+				"type": "boolean",
 				"ask": {
 					"en": "Would you like to receive an email to verify if there any upgrades left after each auto upgrade ?",
 					"fr": "Souhaitez-vous recevoir un email pour vérifier s'il reste des mises à jour après chaque mise à niveau automatique ?"
 				},
-				"default": 1
+				"default": true
 			},
 			{
 				"name": "unattended_mail",
