@@ -8,28 +8,24 @@
 
 source _common.sh
 source /usr/share/yunohost/helpers
+source _sed
 
 #=================================================
 # MANAGE FAILURE OF THE SCRIPT
 #=================================================
 
-ynh_clean_setup () {
-# Nettoyage des résidus d'installation non pris en charge par le script remove.
-# Pas de nettoyage supplémentaire nécessaire ici...
-	echo ""
-}
 ynh_abort_if_errors	# Active trap pour arrêter le script si une erreur est détectée.
 
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-upgrade_level=$YNH_APP_ARG_UPGRADE_LEVEL
-ynh_update=$YNH_APP_ARG_YNH_UPDATE
-previous_apticron=$YNH_APP_ARG_PREVIOUS_APTICRON
-after_apticron=$YNH_APP_ARG_AFTER_APTICRON
-unattended_mail=$YNH_APP_ARG_UNATTENDED_MAIL
-unattended_verbosity=$YNH_APP_ARG_UNATTENDED_VERBOSITY
+upgrade_level="$YNH_APP_ARG_UPGRADE_LEVEL"
+ynh_update="$YNH_APP_ARG_YNH_UPDATE"
+previous_apticron="$YNH_APP_ARG_PREVIOUS_APTICRON"
+after_apticron="$YNH_APP_ARG_AFTER_APTICRON"
+unattended_mail="$YNH_APP_ARG_UNATTENDED_MAIL"
+unattended_verbosity="$YNH_APP_ARG_UNATTENDED_VERBOSITY"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -59,11 +55,11 @@ ynh_install_app_dependencies apticron unattended-upgrades apt-listchanges
 #=================================================
 
 apticron_config="/etc/apticron/apticron.conf"
-ynh_replace_string "# NOTIFY_NO_UPDATES=" "&\nNOTIFY_NO_UPDATES=1" "$apticron_config"
-ynh_replace_string "# CUSTOM_SUBJECT=" \
+ynh_replace_string "# NOTIFY_NO_UPDATES=.*" "&\nNOTIFY_NO_UPDATES=1" "$apticron_config"
+ynh_replace_string "# CUSTOM_SUBJECT=.*" \
 	"&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'" "$apticron_config"
-ynh_replace_string "# CUSTOM_NO_UPDATES_SUBJECT=" \
-	"&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\o/\'" "$apticron_config"
+ynh_replace_string "# CUSTOM_NO_UPDATES_SUBJECT=.*" \
+	"&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\\\o/\'" "$apticron_config"
 
 #=================================================
 # CONFIGURE UNATTENDED-UPGRADES
@@ -72,9 +68,12 @@ ynh_replace_string "# CUSTOM_NO_UPDATES_SUBJECT=" \
 unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
 distro_codename=$(lsb_release -cs)
 
+# Make a backup of 50unattended-upgrades
+cp -a "$unattended_upgrades_config" "/etc/apt/50unattended-upgrades.backup"
+
 # Configure upgrade sources
 # Allow security update
-ynh_replace_string "//\(.*\"o=Debian,n=$distro_codename,l=Debian-Security\";\)" "\1" "$unattended_upgrades_config"
+ynh_replace_string "//\(.*\"o=Debian,n=${distro_codename},l=Debian-Security\";\)" "\1" "$unattended_upgrades_config"
 # Allow other updates
 if [ "$upgrade_level" = "Security and updates" ]
 then
@@ -85,33 +84,33 @@ fi
 # Add YunoHost upgrade source
 if [ $ynh_update -eq 1 ]
 then
-	ynh_replace_string "origin=Debian,codename=\${distro_codename},label=Debian-Security;" \
-		"&\n        //YunoHost upgrade\n        \"o=YunoHost,a=\$distro_codename\";" "$unattended_upgrades_config"
+	ynh_replace_string "origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
+		"&\n\n        //YunoHost upgrade\n        \"o=YunoHost,n=$distro_codename\";" "$unattended_upgrades_config"
 fi
 
 # Allow MinimalSteps upgrading to reduce risk in case of reboot
-ynh_replace_string "//\(Unattended-Upgrade::MinimalSteps\)" "\1 \"true\";" "$unattended_upgrades_config"
+ynh_replace_string "//\(Unattended-Upgrade::MinimalSteps\).*" "\1 \"true\";" "$unattended_upgrades_config"
 
 # Configure Unattended Upgrades mailing
 if [ "$unattended_mail" = "If an upgrade has been done" ]
 then
 	# Allow mail to root
-	ynh_replace_string "//\(Unattended-Upgrade::Mail\)" "\1" "$unattended_upgrades_config"
+	ynh_replace_string "//\(Unattended-Upgrade::Mail \)" "\1" "$unattended_upgrades_config"
 
 	# Send mail even if there's no errors
-	ynh_replace_string "//\(Unattended-Upgrade::MailOnlyOnError\)" "\1 \"false\";" "$unattended_upgrades_config"
+	ynh_replace_string "//\(Unattended-Upgrade::MailOnlyOnError \).*" "\1\"false\";" "$unattended_upgrades_config"
 
 elif [ "$unattended_mail" = "Only if there was an error" ]
 then
 	# Allow mail to root
-	ynh_replace_string "//\(Unattended-Upgrade::Mail\)" "\1" "$unattended_upgrades_config"
+	ynh_replace_string "//\(Unattended-Upgrade::Mail \)" "\1" "$unattended_upgrades_config"
 
 	# Send mail only if there's an error
-	ynh_replace_string "//\(Unattended-Upgrade::MailOnlyOnError\)" "\1 \"true\";" "$unattended_upgrades_config"
+	ynh_replace_string "//\(Unattended-Upgrade::MailOnlyOnError \).*" "\1\"true\";" "$unattended_upgrades_config"
 
 else	# "Never"
 	# Comment "Unattended-Upgrade::Mail" if isn't already commented
-	ynh_replace_string "^\(Unattended-Upgrade::Mail\)" "//\1" "$unattended_upgrades_config"
+	ynh_replace_string "^\(Unattended-Upgrade::Mail \)" "//\1" "$unattended_upgrades_config"
 fi
 
 #=================================================
@@ -125,31 +124,42 @@ ynh_replace_string "__VERBOSITY__" "$unattended_verbosity" "/etc/apt/apt.conf.d/
 ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
 
 #=================================================
-# REMOVE ORIGINAL APTICRON CRON FILE
+# MODIFY ORIGINAL APTICRON CRON FILE
 #=================================================
 
-ynh_secure_remove "/etc/cron.d/apticron"
+apticron_cron="/etc/cron.d/apticron"
+# Copy and comment the current cron
+ynh_replace_string "^.* root if.*" "#&\n&" "$apticron_cron"
+# Modify the time to set at 20:00 every day
+ynh_replace_string "^[[:digit:]].*\( root if.*\)" "0 20 * * *\1" "$apticron_cron"
+# Copy the new cron and set the time to 2:00 every night
+ynh_replace_string "^0 20\(.*\)" "&\n0 2\1" "$apticron_cron"
 
-#=================================================
-# ADD THE CRON FILE
-#=================================================
+if [ $previous_apticron -eq 0 ]
+then
+	# Comment the first cron
+	ynh_replace_string "^0 20 .*" "#&" "$apticron_cron"
+fi
 
-# Here the cron file to use apticron, unattended-upgrades, then apticron again.
-# With a log for unattended-upgrades in /var/log/unattended-upgrades
+if [ $after_apticron -eq 0 ]
+then
+	# Comment the second cron
+	ynh_replace_string "^0 2 .*" "#&" "$apticron_cron"
+fi
 
 #=================================================
 # GENERIC FINALISATION
 #=================================================
-# SECURING FILES AND DIRECTORIES
-#=================================================
-
-# Les fichiers appartiennent à root
-chown -R root: $final_path
-
-#=================================================
 # SEND A README FOR THE ADMIN
 #=================================================
 
-message="If you facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/modele_ynh"
+message="To modify any option of unattended-upgrades, please have a look to $unattended_upgrades_config and 
+/etc/apt/apt.conf.d/02periodic
+Unattended-upgrades will be executed every day at midnight.
 
-ynh_send_readme_to_admin "$message" "$admin root"
+To modify the configuration of apticron, please have a look to $apticron_config.
+Apticron will be executed, depending of the requested configuration at 8 p.m. and 2 a.m. If you want to change this schedule, please have a look to the cron file $apticron_cron.
+
+If you facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
+
+ynh_send_readme_to_admin "$message" "root"

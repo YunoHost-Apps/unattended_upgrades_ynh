@@ -18,13 +18,13 @@
 [YEP 1.5 - Mettre à jour régulièrement le statut de l'app](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-11)  
 `Validated`  
 [YEP 2.18.2 - Gérer l'installation à la racine d’un nom de domaine](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-2182)  
-`Validated` - *Automatically verified.*  
+`Not applicable`
 [YEP 2.18.3 - Gérer l'installation sur un sous-domaine](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-2183)  
-`Validated` - *Automatically verified.*  
+`Not applicable`
 [YEP 2.18.4 - Gérer l'installation sur un chemin /path](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-2184)  
-`Validated` - *Automatically verified.*  
+`Not applicable`
 [YEP 4.6 - Gère le multi-instance](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-11)  
-`Validated` - *Automatically verified.*  
+`Not applicable`
 
 #### [Level 3](https://github.com/YunoHost/doc/blob/master/packaging_apps_levels_fr.md#niveau-3)  
 [YEP 2.3 - Sauvegarder les réponses lors de l'installation](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-23)  
@@ -32,9 +32,9 @@
 
 #### [Level 4](https://github.com/YunoHost/doc/blob/master/packaging_apps_levels_fr.md#niveau-4)  
 [YEP 4.1 - Lier au ldap](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-41)  
-`Validated`  
+`Not applicable`  
 [YEP 4.2 - Lier l'authentification au sso](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-42)  
-`Validated`  
+`Not applicable`  
 
 #### [Level 5](https://github.com/YunoHost/doc/blob/master/packaging_apps_levels_fr.md#niveau-5)  
 [YEP 1.3 - Indiquer la licence associée au paquet](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-13)  
@@ -44,7 +44,7 @@
 [YEP 2.12 - Utiliser les commandes pratiques (helpers)](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-212)  
 `Validated`  
 [YEP 2.18.1 - Lancer le script d'installation d'une webapp correctement](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-2181)  
-`Validated`  
+`Not applicable`  
 
 #### [Level 6](https://github.com/YunoHost/doc/blob/master/packaging_apps_levels_fr.md#niveau-6)  
 [YEP 1.4 - Informer sur l'intention de maintenir un paquet](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-14)  
@@ -64,7 +64,7 @@
 [YEP 3.3 - Faciliter le contrôle de l'intégrité des sources](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-33)  
 `Validated`  
 [YEP 3.5 - Suivre les recommendations de la documentation de l'app](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-35)  
-`Partially validated`  
+`Validated`  
 [YEP 3.6 - Mettre à jour les versions contenant des CVE](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-36)  
 `Validated`  
 [YEP 4.3 - Fournir un script de sauvegarde YunoHost fonctionnel](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-43)  
@@ -86,9 +86,9 @@
 [YEP 2.16 - Vérifier la disponibilité des dépendances sur ARM, x86 et x64](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-216)  
 `Not yet validated` - *Automatically verified.*  
 [YEP 2.18.5 - Gérer la tuile YunoHost pour faciliter la navigation entre les applications](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-2185)  
-`Validated`  
+`Not applicable`  
 [YEP 3.4 - Isoler l'app](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-34)  
-`Partially validated`  
+`Not applicable`  
 [YEP 4.5 - Utiliser les hooks](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-45)  
 `Not applicable`  
 
@@ -104,11 +104,11 @@
 [YEP 2.17 - Prendre en compte la version d'origine lors des mises à jour](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-217)  
 `Validated`  
 [YEP 4.2.1 - Déconnexion](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-421)  
-`Don't know`  
+`Not applicable`  
 
 #### Other YEP  
 [YEP 3.1 - Ne pas demander ou stocker de mot de passe LDAP](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-31)  
-`Validated`  
+`Not applicable`  
 [YEP 4.7 - Ajouter un module à la CLI](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-47)  
 `Not applicable`  
 [YEP 4.8 - Ajouter un module à l'admin web](https://github.com/YunoHost/doc/blob/master/packaging_apps_guidelines_fr.md#yep-48)  

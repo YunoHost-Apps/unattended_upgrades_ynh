@@ -13,8 +13,6 @@ if [ ! -e _common.sh ]; then
 fi
 source _common.sh
 source /usr/share/yunohost/helpers
-# Load common variables for all scripts.
-source ../settings/scripts/_variables
 
 #=================================================
 # MANAGE SCRIPT FAILURE
@@ -29,117 +27,53 @@ ynh_abort_if_errors
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get $app domain)
-path_url=$(ynh_app_setting_get $app path)
-final_path=$(ynh_app_setting_get $app final_path)
-db_name=$(ynh_app_setting_get $app db_name)
-
-#=================================================
-# CHECK IF THE APP CAN BE RESTORED
-#=================================================
-
-ynh_webpath_available $domain $path_url \
-	|| ynh_die "Path not available: ${domain}${path_url}"
-test ! -d $final_path \
-	|| ynh_die "There is already a directory: $final_path "
-
-#=================================================
-# STANDARD RESTORE STEPS
-#=================================================
-# RESTORE OF THE NGINX CONFIGURATION
-#=================================================
-
-ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
-
-#=================================================
-# RESTORE OF THE MAIN DIR OF THE APP
-#=================================================
-
-ynh_restore_file "$final_path"
-
-#=================================================
-# RESTORE OF THE SQL BDD
-#=================================================
-
-db_pwd=$(ynh_app_setting_get $app mysqlpwd)
-ynh_mysql_setup_db $db_name $db_name $db_pwd
-ynh_mysql_connect_as $db_name $db_pwd $db_name < ./db.sql
-
-#=================================================
-# RECREATE OF THE DEDICATED USER
-#=================================================
-
-ynh_system_user_create $app	# Recreate the dedicated user, if not exist
-
-#=================================================
-# RESTORE USER RIGHTS
-#=================================================
-
-# Les fichiers appartiennent à root
-chown -R root: $final_path
-
-#=================================================
-# RESTORE OF THE PHP-FPM CONFIGURATION
-#=================================================
-
-ynh_restore_file "/etc/php5/fpm/pool.d/$app.conf"
-ynh_restore_file "/etc/php5/fpm/conf.d/20-$app.ini"
-
-#=================================================
-# RESTORE FAIL2BAN CONFIGURATION
-#=================================================
-
-ynh_restore_file "/etc/fail2ban/jail.d/$app.conf"
-ynh_restore_file "/etc/fail2ban/filter.d/$app.conf"
-systemctl restart fail2ban
-
 #=================================================
 # SPECIFIC RESTORE
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
 
-ynh_install_app_dependencies $app_depencencies
+ynh_install_app_dependencies apticron unattended-upgrades apt-listchanges
 
 #=================================================
-# ENABLE SERVICE IN ADMIN PANEL
+# RESTORE UNATTENDED-UPGRADES CONFIG
 #=================================================
 
-yunohost service add $app --log "/var/log/$app/APP.log"
+ynh_restore_file "/etc/apt/apt.conf.d/50unattended-upgrades"
+# Restore also the backup config file
+ynh_restore_file "/etc/apt/50unattended-upgrades.backup"
 
 #=================================================
-# RESTORE SYSTEMD
+# RESTORE APT PERIODIC
 #=================================================
 
-ynh_restore_file "/etc/systemd/system/$app.service"
-## Démarrage auto du service
-systemctl enable $app.service
+ynh_restore_file "/etc/apt/apt.conf.d/02periodic"
 
 #=================================================
-# RESTORE OF THE CRON FILE
+# RESTORE APTICRON CONFIG
 #=================================================
 
-ynh_restore_file "/etc/cron.d/$app"
+ynh_restore_file "/etc/apticron/apticron.conf"
 
 #=================================================
-# BACKUP OF THE LOGROTATE CONFIGURATION
+# RESTORE THE CRON FILE
 #=================================================
 
-ynh_restore_file "/etc/logrotate.d/$app"
+ynh_restore_file "/etc/cron.d/apticron"
 
 #=================================================
 # GENERIC FINALISATION
 #=================================================
-# RELOAD NGINX AND PHP-FPM
-#=================================================
-
-systemctl reload php5-fpm
-systemctl reload nginx
-
-#=================================================
 # SEND A README FOR THE ADMIN
 #=================================================
 
-message="If you facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/modele_ynh"
+message="To modify any option of unattended-upgrades, please have a look to $unattended_upgrades_config and 
+/etc/apt/apt.conf.d/02periodic
+Unattended-upgrades will be executed every day at midnight.
 
-ynh_send_readme_to_admin "$message" "$admin root"
+To modify the configuration of apticron, please have a look to $apticron_config.
+Apticron will be executed, depending of the requested configuration at 8 p.m. and 2 a.m. If you want to change this schedule, please have a look to the cron file $apticron_cron.
+
+If you facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
+
+ynh_send_readme_to_admin "$message" "root"

@@ -1,38 +1,41 @@
-# ...WORK IN PROGRESS...
+# Unattended-upgrades for YunoHost
 
-# APP for YunoHost
-
-[![Integration level](https://dash.yunohost.org/integration/APP.svg)](https://ci-apps.yunohost.org/jenkins/job/APP%20%28Community%29/lastBuild/consoleFull)  
-[![Install APP with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=APP)
+[![Integration level](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://ci-apps.yunohost.org/jenkins/job/unattended_upgrades%20%28Community%29/lastBuild/consoleFull)  
+[![Install Unattended-upgrades with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=unattended_upgrades)
 
 *[Lire ce readme en français.](./README_fr.md)*
 
-> *This package allow you to install APP quickly and simply on a YunoHost server.  
+> *This package allow you to install Unattended-upgrades and Apticron quickly and simply on a YunoHost server.  
 If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
 
 ## Overview
-Small description...
 
-**Shipped version:** version
+Unattended-upgrades can download and install security upgrades automatically and unattended, taking care to only install packages from the configured APT source, and checking for dpkg prompts about configuration file changes.
+
+Apticron is a simple script which sends emails about pending package updates such as security updates, properly handling packages on hold both by dselect and aptitude.
 
 ## Screenshots
 
-![](screenshot.png)
-
 ## Configuration
 
-How to configure
+Have a look to the following config files for Unattended-upgrades
+ * /etc/apt/apt.conf.d/50unattended-upgrades
+ * /etc/apt/apt.conf.d/02periodic
+
+And this one for Apticron
+ * /etc/apticron/apticron.conf
+With its cron file
+ * /etc/cron.d/apticron
 
 ## Documentation
 
- * Official documentation: http://online_doc
+ * Official Unattended-upgrades documentation: https://wiki.debian.org/UnattendedUpgrades
+ * Official Apticron documentation: https://manpages.debian.org/stretch/apticron/apticron.1.en.html
  * YunoHost documentation: There no other documentations, feel free to contribute.
 
 ## YunoHost specific features
 
 #### Multi-users support
-
-Supported, with LDAP and SSO.
 
 #### Supported architectures
 
@@ -40,16 +43,11 @@ Supported, with LDAP and SSO.
 
 ## Limitations
 
-* Any limitations...
-
 ## Additionnal informations
-
-* Other informations
 
 ## Links
 
- * Report a bug: https://github.com/YunoHost-Apps/APP_ynh/issues
- * APP website: http://APP.org/
+ * Report a bug: https://github.com/YunoHost-Apps/unattended_upgrades_ynh/issues
  * YunoHost website: https://yunohost.org/
 
 ---
@@ -57,11 +55,11 @@ Supported, with LDAP and SSO.
 Developers infos
 ----------------
 
-Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/APP_ynh/tree/testing).
+Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
 ```
-sudo yunohost app install https://github.com/YunoHost-Apps/APP_ynh/tree/testing --verbose
+sudo yunohost app install https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing --verbose
 or
-sudo yunohost app upgrade APP -u https://github.com/YunoHost-Apps/APP_ynh/tree/testing --verbose
+sudo yunohost app upgrade unattended_upgrades -u https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing --verbose
 ```

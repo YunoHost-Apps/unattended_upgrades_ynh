@@ -1,14 +1,14 @@
 {
-	"name": "Unattended upgrades",
+	"name": "Unattended-upgrades",
 	"id": "unattended_upgrades",
 	"packaging_format": 1,
 	"description": {
-		"en": "Description",
-		"fr": "Description"
+		"en": "Daily automatic upgrades",
+		"fr": "Mise à jour automatique quotidienne."
 	},
 	"version": "1.0~ynh1",
-	"url": "http://www.site",
-	"license": "free",
+	"url": "https://wiki.debian.org/UnattendedUpgrades",
+	"license": "GPL-2+",
 	"maintainer": {
 		"name": "Maniack Crudelis",
 		"email": "maniackc_dev@crudelis.fr"
@@ -23,7 +23,8 @@
 			{
 				"name": "upgrade_level",
 				"ask": {
-					"en": "Choose the sources of packages to automatically upgrade"
+					"en": "Choose the sources of packages to automatically upgrade",
+					"fr": "Choisissez les sources des paquets à mettre à jour automatiquement"
 				},
 				"choices": ["Security only", "Security and updates"],
 				"default": "Security only"
@@ -31,28 +32,32 @@
 			{
 				"name": "ynh_update",
 				"ask": {
-					"en": "Would you like to update YunoHost packages automatically ?"
+					"en": "Would you like to update YunoHost packages automatically ?",
+					"fr": "Souhaitez-vous mettre à jour les paquets YunoHost automatiquement ?"
 				},
-				"default": true
+				"default": 1
 			},
 			{
 				"name": "previous_apticron",
 				"ask": {
-					"en": "Would you like to receive an email to inform which upgrades need to be done ?"
+					"en": "Would you like to receive an email to inform which upgrades need to be done ?",
+					"fr": "Souhaitez-vous recevoir un email pour vous informer des mises à jour nécessaires ?"
 				},
-				"default": true
+				"default": 1
 			},
 			{
 				"name": "after_apticron",
 				"ask": {
-					"en": "Would you like to receive an email to verify if there any upgrades left after each auto upgrade ?"
+					"en": "Would you like to receive an email to verify if there any upgrades left after each auto upgrade ?",
+					"fr": "Souhaitez-vous recevoir un email pour vérifier s'il reste des mises à jour après chaque mise à niveau automatique ?"
 				},
-				"default": true
+				"default": 1
 			},
 			{
 				"name": "unattended_mail",
 				"ask": {
-					"en": "Would you like to receive an email from Unattended-Upgrades ?"
+					"en": "Would you like to receive an email from Unattended-Upgrades ?",
+					"fr": "Souhaitez-vous recevoir un email de Unattended-Upgrades ?"
 				},
 				"choices": ["If an upgrade has been done", "Only if there was an error", "Never"],
 				"default": "If an upgrade has been done"
@@ -60,14 +65,16 @@
 			{
 				"name": "unattended_verbosity",
 				"ask": {
-					"en": "Choose the level of verbosity of unattended_upgrades mail"
+					"en": "Choose the level of verbosity of Unattended-Upgrades mail",
+					"fr": "Choisir le niveau de verbosité du mail de Unattended-Upgrades"
 				},
 				"help": {
-					"en": "1: Progress report only.<br>2: Progress report and command outputs.<br>3: Progress report and command outputs and trace.<br>"
+					"en": "1: Progress report only.<br>2: Progress report and command outputs.<br>3: Progress report and command outputs and trace.<br>",
+					"fr": "1: Rapport d'avancement seulement.<br>2: Rapport d'avancement et sortie de commandes.<br>3: Rapport d'avancement, sortie de commandes et trace."
 				},
 				"choices": ["1", "2", "3"],
-				"default": "2"
-			},
+				"default": "1"
+			}
 		]
 	}
 }

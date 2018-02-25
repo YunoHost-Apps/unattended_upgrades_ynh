@@ -8,8 +8,7 @@
 
 source _common.sh
 source /usr/share/yunohost/helpers
-# Load common variables for all scripts.
-source _variables
+source _sed
 
 #=================================================
 # LOAD SETTINGS
@@ -17,36 +16,11 @@ source _variables
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get $app domain)
-path_url=$(ynh_app_setting_get $app path)
-admin=$(ynh_app_setting_get $app admin)
-is_public=$(ynh_app_setting_get $app is_public)
-final_path=$(ynh_app_setting_get $app final_path)
-port=$(ynh_app_setting_get $app port)
-db_name=$(ynh_app_setting_get $app db_name)
-
 #=================================================
 # CHECK VERSION
 #=================================================
 
 ynh_abort_if_up_to_date
-
-#=================================================
-# FIX OLD THINGS
-#=================================================
-
-if [ "$is_public" = "Yes" ]; then
-	ynh_app_setting_set $app is_public 1	# Fixe is_public en booléen
-	is_public=1
-elif [ "$is_public" = "No" ]; then
-	ynh_app_setting_set $app is_public 0
-	is_public=0
-fi
-
-if [ -z $db_name ]; then	# Si db_name n'est pas renseigné dans app setting
-	db_name=$(ynh_sanitize_dbid $app)
-	ynh_app_setting_set $app db_name $db_name
-fi
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
@@ -62,94 +36,41 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# CHECK THE PATH
-#=================================================
-
-path_url=$(ynh_normalize_url_path $path_url)	# Vérifie et corrige la syntaxe du path.
-
-#=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
-# DOWNLOAD, CHECK AND UNPACK SOURCE
+# INSTALL DEPENDENCIES
 #=================================================
 
-ynh_setup_source "$final_path"	# Télécharge la source, décompresse et copie dans $final_path
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-
-if [ "$path_url" != "/" ]
-then
-	ynh_replace_string "^#sub_path_only" "" "../conf/nginx.conf"
-fi
-ynh_add_nginx_config
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-
-ynh_system_user_create $app	# Create the dedicated user, if not exist
-
-#=================================================
-# PHP-FPM CONFIGURATION
-#=================================================
-
-ynh_add_fpm_config	# Créer le fichier de configuration du pool php-fpm et le configure.
+ynh_install_app_dependencies apticron unattended-upgrades apt-listchanges
 
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# ...
+# UPGRADE APTICRON
 #=================================================
 
-# Copie ou modification d'un fichier de config
-ynh_backup_if_checksum_is_different "$final_path/CONFIG_FILE"	# Créé un backup du fichier de config si il a été modifié.
-ynh_store_file_checksum "$final_path/CONFIG_FILE"	# Réenregistre la somme de contrôle du fichier de config
+# Nothing to do here...
 
 #=================================================
-# SETUP LOGROTATE
+# UPGRADE UNATTENDED-UPGRADES
 #=================================================
 
-ynh_use_logrotate --non-append
+# Nothing to do here...
 
 #=================================================
-# SETUP SYSTEMD
+# UPGRADE APT PERIODIC FOR UNATTENDED
 #=================================================
 
-ynh_add_systemd_config
+ynh_backup_if_checksum_is_different "/etc/apt/apt.conf.d/02periodic"
+
+cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
+ynh_replace_string "__VERBOSITY__" "$unattended_verbosity" "/etc/apt/apt.conf.d/02periodic"
+# This config file is used by /etc/cron.daily/apt
+
+ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
 
 #=================================================
-# GENERIC FINALISATION
-#=================================================
-# UPGRADE FAIL2BAN
+# UPGRADE APTICRON CRON FILE
 #=================================================
 
-ynh_add_fail2ban_config "/var/log/nginx/${domain}-error.log" "PHP message: Leed: wrong login for .* client: <HOST>" 5
-
-#=================================================
-# SECURING FILES AND DIRECTORIES
-#=================================================
-
-# Les fichiers appartiennent à root
-chown -R root: $final_path
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-
-if [ $is_public -eq 0 ]
-then	# Retire l'accès public
-	ynh_app_setting_delete $app skipped_uris
-fi
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	ynh_app_setting_set $app skipped_uris "/"
-fi
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-
-systemctl reload nginx
+# Nothing to do here...

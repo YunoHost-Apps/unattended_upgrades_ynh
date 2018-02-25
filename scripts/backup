@@ -27,63 +27,30 @@ ynh_abort_if_errors
 
 app=$YNH_APP_INSTANCE_NAME
 
-final_path=$(ynh_app_setting_get $app final_path)
-domain=$(ynh_app_setting_get $app domain)
-db_name=$(ynh_app_setting_get $app db_name)
-db_pwd=$(ynh_app_setting_get $app mysqlpwd)
-
-#=================================================
-# STANDARD BACKUP STEPS
-#=================================================
-# BACKUP OF THE MAIN DIR OF THE APP
-#=================================================
-
-CHECK_SIZE "$final_path"
-ynh_backup "$final_path"
-
-#=================================================
-# BACKUP OF THE NGINX CONFIGURATION
-#=================================================
-
-ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
-
-#=================================================
-# BACKUP OF THE PHP-FPM CONFIGURATION
-#=================================================
-
-ynh_backup "/etc/php5/fpm/pool.d/$app.conf"
-ynh_backup "/etc/php5/fpm/conf.d/20-$app.ini"
-
-#=================================================
-# BACKUP OF THE SQL BDD
-#=================================================
-
-ynh_mysql_dump_db "$db_name" > db.sql
-CHECK_SIZE "db.sql"
-
-#=================================================
-# BACKUP FAIL2BAN CONFIGURATION
-#=================================================
-
-ynh_backup "/etc/fail2ban/jail.d/$app.conf"
-ynh_backup "/etc/fail2ban/filter.d/$app.conf"
-
 #=================================================
 # SPECIFIC BACKUP
 #=================================================
-# BACKUP LOGROTATE
+# BACKUP UNATTENDED-UPGRADES CONFIG
 #=================================================
 
-ynh_backup "/etc/logrotate.d/$app"
+ynh_backup "/etc/apt/apt.conf.d/50unattended-upgrades"
+# backup also the backup config file
+ynh_backup "/etc/apt/50unattended-upgrades.backup"
 
 #=================================================
-# BACKUP SYSTEMD
+# BACKUP APT PERIODIC
 #=================================================
 
-ynh_backup "/etc/systemd/system/$app.service"
+ynh_backup "/etc/apt/apt.conf.d/02periodic"
+
+#=================================================
+# BACKUP APTICRON CONFIG
+#=================================================
+
+ynh_backup "/etc/apticron/apticron.conf"
 
 #=================================================
 # BACKUP OF THE CRON FILE
 #=================================================
 
-ynh_backup "/etc/cron.d/$app"
+ynh_backup "/etc/cron.d/apticron"
