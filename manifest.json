@@ -8,7 +8,7 @@
 	},
 	"version": "1.0~ynh1",
 	"url": "https://wiki.debian.org/UnattendedUpgrades",
-	"license": "GPL-2+",
+	"license": "GPL-2.0-or-later",
 	"maintainer": {
 		"name": "Maniack Crudelis",
 		"email": "maniackc_dev@crudelis.fr"
