@@ -55,7 +55,6 @@ ynh_install_app_dependencies apticron unattended-upgrades apt-listchanges
 #=================================================
 
 apticron_config="/etc/apticron/apticron.conf"
-ynh_replace_string "# NOTIFY_NO_UPDATES=.*" "&\nNOTIFY_NO_UPDATES=1" "$apticron_config"
 ynh_replace_string "# CUSTOM_SUBJECT=.*" \
 	"&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'" "$apticron_config"
 ynh_replace_string "# CUSTOM_NO_UPDATES_SUBJECT=.*" \

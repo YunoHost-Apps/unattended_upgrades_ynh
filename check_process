@@ -28,7 +28,6 @@
 		unattended_mail="Only if there was an error"
 		unattended_verbosity="2"
 	; Checks
-		pkg_linter=1
 		setup_nourl=1
 		upgrade=1
 		backup_restore=1
@@ -41,7 +40,6 @@
 		unattended_mail="Never"
 		unattended_verbosity="3"
 	; Checks
-		pkg_linter=1
 		setup_nourl=1
 		upgrade=1
 		backup_restore=1
