@@ -22,7 +22,7 @@ unattended_verbosity=$(ynh_app_setting_get $app unattended_verbosity)
 # CHECK VERSION
 #=================================================
 
-ynh_abort_if_up_to_date
+upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
@@ -31,11 +31,11 @@ ynh_abort_if_up_to_date
 # It's impossible to make a backup here, because the backup name is going to have 32 characters. Which is not allowed...
 
 # Backup the current version of the app
-# ynh_backup_before_upgrade
-# ynh_clean_setup () {
-# 	# restore it if the upgrade fails
-# 	ynh_restore_upgradebackup
-# }
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
