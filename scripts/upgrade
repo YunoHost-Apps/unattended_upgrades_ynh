@@ -8,7 +8,6 @@
 
 source _common.sh
 source /usr/share/yunohost/helpers
-source _sed
 
 #=================================================
 # LOAD SETTINGS
@@ -17,12 +16,23 @@ source _sed
 app=$YNH_APP_INSTANCE_NAME
 
 unattended_verbosity=$(ynh_app_setting_get $app unattended_verbosity)
+overwrite_periodic=$(ynh_app_setting_get $app overwrite_periodic)
 
 #=================================================
 # CHECK VERSION
 #=================================================
 
 upgrade_type=$(ynh_check_app_version_changed)
+
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+
+# If overwrite_periodic doesn't exist, create it
+if [ -z "$overwrite_periodic" ]; then
+	overwrite_periodic=1
+	ynh_app_setting_set $app overwrite_periodic $overwrite_periodic
+fi
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
@@ -65,13 +75,17 @@ ynh_install_app_dependencies apticron unattended-upgrades apt-listchanges
 # UPGRADE APT PERIODIC FOR UNATTENDED
 #=================================================
 
-ynh_backup_if_checksum_is_different "/etc/apt/apt.conf.d/02periodic"
+# Overwrite 02periodic config file only if it's allowed
+if [ $overwrite_periodic -eq 1 ]
+then
+	ynh_backup_if_checksum_is_different "/etc/apt/apt.conf.d/02periodic"
 
-cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
-ynh_replace_string "__VERBOSITY__" "$unattended_verbosity" "/etc/apt/apt.conf.d/02periodic"
-# This config file is used by /etc/cron.daily/apt
+	cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
+	ynh_replace_string "__VERBOSITY__" "$unattended_verbosity" "/etc/apt/apt.conf.d/02periodic"
+	# This config file is used by /etc/cron.daily/apt
 
-ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
+	ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
+fi
 
 #=================================================
 # UPGRADE APTICRON CRON FILE

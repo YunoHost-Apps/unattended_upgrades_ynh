@@ -32,12 +32,13 @@ app=$YNH_APP_INSTANCE_NAME
 # STORE SETTINGS FROM MANIFEST
 #=================================================
 
-ynh_app_setting_set $app upgrade_level $upgrade_level
+ynh_app_setting_set $app upgrade_level "$upgrade_level"
 ynh_app_setting_set $app ynh_update $ynh_update
 ynh_app_setting_set $app previous_apticron $previous_apticron
 ynh_app_setting_set $app after_apticron $after_apticron
-ynh_app_setting_set $app unattended_mail $unattended_mail
+ynh_app_setting_set $app unattended_mail "$unattended_mail"
 ynh_app_setting_set $app unattended_verbosity $unattended_verbosity
+ynh_app_setting_set $app overwrite_periodic "1"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -64,26 +65,23 @@ ynh_replace_string "# CUSTOM_NO_UPDATES_SUBJECT=.*" \
 #=================================================
 
 unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
-distro_codename=$(lsb_release -cs)
 
 # Make a backup of 50unattended-upgrades
 cp -a "$unattended_upgrades_config" "/etc/apt/50unattended-upgrades.backup"
 
 # Configure upgrade sources
-# Allow security update
-ynh_replace_string "//\(.*\"o=Debian,n=${distro_codename},l=Debian-Security\";\)" "\1" "$unattended_upgrades_config"
 # Allow other updates
 if [ "$upgrade_level" = "Security and updates" ]
 then
-	ynh_replace_string "//\(.*\"o=Debian,n=$distro_codename\";\)" "\1" "$unattended_upgrades_config"
-	ynh_replace_string "//\(.*\"o=Debian,n=$distro_codename-updates\";\)" "\1" "$unattended_upgrades_config"
+	ynh_replace_string "//\(.*\"o=Debian,a=stable\)" "\1" "$unattended_upgrades_config"
+	ynh_replace_string "//\(.*\"o=Debian,a=stable-updates\)" "\1" "$unattended_upgrades_config"
 fi
 
 # Add YunoHost upgrade source
 if [ $ynh_update -eq 1 ]
 then
 	ynh_replace_string "origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
-		"&\n\n        //YunoHost upgrade\n        \"o=YunoHost,n=$distro_codename\";" "$unattended_upgrades_config"
+		"&\n\n        //YunoHost upgrade\n        \"o=YunoHost,a=stable\";" "$unattended_upgrades_config"
 fi
 
 # Allow MinimalSteps upgrading to reduce risk in case of reboot
