@@ -1,0 +1,22 @@
+[{
+		"id": "reset_default_unattended",
+		"name": "Reset the 50unattended-upgrades config file and restore a default one.",
+		"command": "/bin/bash scripts/actions/reset_default_config \"50unattended-upgrades\"",
+		"user": "root",
+		"accepted_return_codes": [0],
+		"description": {
+			"en": "Reset the unattended-upgrades config file 50unattended-upgrades.",
+			"fr": "Réinitialise le fichier de configuration unattended-upgrades 50unattended-upgrades."
+		}
+},
+{
+		"id": "reset_default_periodic",
+		"name": "Reset the 02periodic apt config file and restore a default one.",
+		"command": "/bin/bash scripts/actions/reset_default_config \"02periodic\"",
+		"user": "root",
+		"accepted_return_codes": [0],
+		"description": {
+			"en": "Reset the config file 02periodic.",
+			"fr": "Réinitialise le fichier de configuration 02periodic."
+		}
+}]
