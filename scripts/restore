@@ -53,7 +53,7 @@ ynh_restore_file "/etc/apt/apt.conf.d/02periodic"
 ynh_restore_file "/etc/apticron/apticron.conf"
 
 #=================================================
-# RESTORE THE CRON FILE
+# RESTORE CRON FILE
 #=================================================
 
 ynh_restore_file "/etc/cron.d/apticron"
@@ -71,6 +71,6 @@ Unattended-upgrades will be executed every day at midnight.
 To modify the configuration of apticron, please have a look to /etc/apticron/apticron.conf.
 Apticron will be executed, depending of the requested configuration at 8 p.m. and 2 a.m. If you want to change this schedule, please have a look to the cron file /etc/cron.d/apticron.
 
-If you facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
+If you're facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
 
 ynh_send_readme_to_admin --app_message="$message" --recipients="root"
