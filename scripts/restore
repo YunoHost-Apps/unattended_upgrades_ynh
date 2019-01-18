@@ -8,6 +8,8 @@
 
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
+# Load common variables for all scripts.
+source ../settings/scripts/_variables
 
 #=================================================
 # MANAGE SCRIPT FAILURE
@@ -28,7 +30,7 @@ app=$YNH_APP_INSTANCE_NAME
 # REINSTALL DEPENDENCIES
 #=================================================
 
-ynh_install_app_dependencies apticron unattended-upgrades apt-listchanges
+ynh_install_app_dependencies $app_depencencies
 
 #=================================================
 # RESTORE UNATTENDED-UPGRADES CONFIG

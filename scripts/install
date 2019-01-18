@@ -8,6 +8,8 @@
 
 source _common.sh
 source /usr/share/yunohost/helpers
+# Load common variables for all scripts.
+source _variables
 
 #=================================================
 # MANAGE FAILURE OF THE SCRIPT
@@ -46,7 +48,7 @@ ynh_app_setting_set $app overwrite_periodic "1"
 # INSTALL DEPENDENCIES
 #=================================================
 
-ynh_install_app_dependencies apticron unattended-upgrades apt-listchanges
+ynh_install_app_dependencies $app_depencencies
 
 #=================================================
 # SPECIFIC SETUP

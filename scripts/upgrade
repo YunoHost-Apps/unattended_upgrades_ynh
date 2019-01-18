@@ -8,6 +8,8 @@
 
 source _common.sh
 source /usr/share/yunohost/helpers
+# Load common variables for all scripts.
+source _variables
 
 #=================================================
 # LOAD SETTINGS
@@ -55,7 +57,7 @@ ynh_abort_if_errors
 # INSTALL DEPENDENCIES
 #=================================================
 
-ynh_install_app_dependencies apticron unattended-upgrades apt-listchanges
+ynh_install_app_dependencies $app_depencencies
 
 #=================================================
 # SPECIFIC UPGRADE

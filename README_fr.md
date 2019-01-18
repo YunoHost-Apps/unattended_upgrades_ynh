@@ -43,9 +43,9 @@ Avec son cron
 
 #### Architectures supportées.
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/jenkins/job/unattended_upgrades%20(Community)/badge/icon)](https://ci-apps.yunohost.org/jenkins/job/unattended_upgrades%20(Community)/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/jenkins/job/unattended_upgrades%20(Community)%20(%7EARM%7E)/badge/icon)](https://ci-apps-arm.yunohost.org/jenkins/job/unattended_upgrades%20(Community)%20(%7EARM%7E)/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/jenkins/job/unattended_upgrades%20(Community)/badge/icon)](https://ci-stretch.nohost.me/jenkins/job/unattended_upgrades%20(Community)/)
+* x86-64b - [![](https://ci-apps.yunohost.org/ci/logs/unattended_upgrades%20%28Community%29.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/)
+* ARMv8-A - [![](https://ci-apps-arm.yunohost.org/ci/logs/unattended_upgrades%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/unattended_upgrades/)
+* Jessie x86-64b - [![](https://ci-stretch.nohost.me/ci/logs/unattended_upgrades%20%28Community%29.svg)](https://ci-stretch.nohost.me/ci/apps/unattended_upgrades/)
 
 ## Limitations
 
