@@ -8,6 +8,8 @@
 
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
+# Load common variables for all scripts.
+source ../settings/scripts/_variables
 
 #=================================================
 # MANAGE SCRIPT FAILURE
@@ -28,7 +30,7 @@ app=$YNH_APP_INSTANCE_NAME
 # REINSTALL DEPENDENCIES
 #=================================================
 
-ynh_install_app_dependencies apticron unattended-upgrades apt-listchanges
+ynh_install_app_dependencies $app_depencencies
 
 #=================================================
 # RESTORE UNATTENDED-UPGRADES CONFIG
@@ -51,7 +53,7 @@ ynh_restore_file "/etc/apt/apt.conf.d/02periodic"
 ynh_restore_file "/etc/apticron/apticron.conf"
 
 #=================================================
-# RESTORE THE CRON FILE
+# RESTORE CRON FILE
 #=================================================
 
 ynh_restore_file "/etc/cron.d/apticron"
@@ -62,6 +64,9 @@ ynh_restore_file "/etc/cron.d/apticron"
 # SEND A README FOR THE ADMIN
 #=================================================
 
+# Get main domain and buid the url of the admin panel of the app.
+admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
+
 message="To modify any option of unattended-upgrades, please have a look to /etc/apt/apt.conf.d/50unattended-upgrades and 
 /etc/apt/apt.conf.d/02periodic
 Unattended-upgrades will be executed every day at midnight.
@@ -69,6 +74,9 @@ Unattended-upgrades will be executed every day at midnight.
 To modify the configuration of apticron, please have a look to /etc/apticron/apticron.conf.
 Apticron will be executed, depending of the requested configuration at 8 p.m. and 2 a.m. If you want to change this schedule, please have a look to the cron file /etc/cron.d/apticron.
 
-If you facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
+You can configure this app easily by using the experimental config-panel feature: $admin_panel/config-panel.
+You can also find some specific actions for this app by using the experimental action feature: $admin_panel/actions.
 
-ynh_send_readme_to_admin --app_message="$message" --recipients="root"
+If you're facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
+
+ynh_send_readme_to_admin --app_message="$message" --recipients="root" --type="restore"

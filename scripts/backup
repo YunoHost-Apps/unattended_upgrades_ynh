@@ -29,7 +29,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 
 ynh_backup "/etc/apt/apt.conf.d/50unattended-upgrades"
-# backup also the backup config file
+# Backup also the backup of the config file
 ynh_backup "/etc/apt/50unattended-upgrades.backup"
 
 #=================================================
@@ -45,7 +45,7 @@ ynh_backup "/etc/apt/apt.conf.d/02periodic"
 ynh_backup "/etc/apticron/apticron.conf"
 
 #=================================================
-# BACKUP OF THE CRON FILE
+# BACKUP THE CRON FILE
 #=================================================
 
 ynh_backup "/etc/cron.d/apticron"

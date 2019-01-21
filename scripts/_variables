@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Dependencies
+app_depencencies="apticron unattended-upgrades apt-listchanges"
