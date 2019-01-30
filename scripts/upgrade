@@ -14,6 +14,7 @@ source _variables
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Load settings"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -29,6 +30,7 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
+ynh_script_progression --message="Ensure downward compatibility"
 
 # If overwrite_periodic doesn't exist, create it
 if [ -z "$overwrite_periodic" ]; then
@@ -39,8 +41,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-
-# It's impossible to make a backup here, because the backup name is going to have 32 characters. Which is not allowed...
+ynh_script_progression --message="Backup the app before upgrading" --weight=3
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -56,6 +57,7 @@ ynh_abort_if_errors
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
+ynh_script_progression --message="Upgrade dependencies" --weight=5
 
 ynh_install_app_dependencies $app_depencencies
 
@@ -80,6 +82,7 @@ ynh_install_app_dependencies $app_depencencies
 # Overwrite 02periodic config file only if it's allowed
 if [ $overwrite_periodic -eq 1 ]
 then
+	ynh_script_progression --message="Upgrade APT Periodic for Unattended" --weight=3
 	ynh_backup_if_checksum_is_different "/etc/apt/apt.conf.d/02periodic"
 
 	cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
@@ -116,4 +119,9 @@ You can also find some specific actions for this app by using the experimental a
 
 If you're facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
 
+#=================================================
+# END OF SCRIPT
+#=================================================
+
 ynh_send_readme_to_admin --app_message="$message" --recipients="root" --type="upgrade"
+ynh_script_progression --message="Upgrade completed" --last
