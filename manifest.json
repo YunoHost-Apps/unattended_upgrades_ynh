@@ -6,7 +6,7 @@
 		"en": "Daily automatic upgrades",
 		"fr": "Mise à jour automatique quotidienne."
 	},
-	"version": "1.0~ynh3",
+	"version": "1.0~ynh4",
 	"url": "https://wiki.debian.org/UnattendedUpgrades",
 	"license": "GPL-2.0-or-later",
 	"maintainer": {
@@ -14,7 +14,7 @@
 		"email": "maniackc_dev@crudelis.fr"
 	},
 	"requirements": {
-		"yunohost": ">= 3.3.3"
+		"yunohost": ">= 3.4"
 	},
 	"multi_instance": false,
 	"services": [],
