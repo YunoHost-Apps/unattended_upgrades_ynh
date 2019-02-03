@@ -21,6 +21,7 @@ ynh_abort_if_errors
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
+ynh_script_progression --message="Retrieve arguments from the manifest"
 
 upgrade_level="$YNH_APP_ARG_UPGRADE_LEVEL"
 ynh_update="$YNH_APP_ARG_YNH_UPDATE"
@@ -34,6 +35,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
+ynh_script_progression --message="Store settings from manifest" --weight=3
 
 ynh_app_setting_set $app upgrade_level "$upgrade_level"
 ynh_app_setting_set $app ynh_update $ynh_update
@@ -41,13 +43,16 @@ ynh_app_setting_set $app previous_apticron $previous_apticron
 ynh_app_setting_set $app after_apticron $after_apticron
 ynh_app_setting_set $app unattended_mail "$unattended_mail"
 ynh_app_setting_set $app unattended_verbosity $unattended_verbosity
+
 ynh_app_setting_set $app overwrite_periodic "1"
+ynh_app_setting_set $app admin_mail_html "1"
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
+ynh_script_progression --message="Install dependencies" --weight=10
 
 ynh_install_app_dependencies $app_depencencies
 
@@ -56,6 +61,7 @@ ynh_install_app_dependencies $app_depencencies
 #=================================================
 # CONFIGURE APTICRON
 #=================================================
+ynh_script_progression --message="Configure Apticron"
 
 apticron_config="/etc/apticron/apticron.conf"
 ynh_replace_string "# CUSTOM_SUBJECT=.*" \
@@ -66,6 +72,7 @@ ynh_replace_string "# CUSTOM_NO_UPDATES_SUBJECT=.*" \
 #=================================================
 # CONFIGURE UNATTENDED-UPGRADES
 #=================================================
+ynh_script_progression --message="Configure Unattended-Upgrades"
 
 unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
 
@@ -115,6 +122,7 @@ fi
 #=================================================
 # CONFIGURE APT PERIODIC FOR UNATTENDED
 #=================================================
+ynh_script_progression --message="Configure APT Periodic for Unattended" --weight=2
 
 cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
 ynh_replace_string "__VERBOSITY__" "$unattended_verbosity" "/etc/apt/apt.conf.d/02periodic"
@@ -125,6 +133,7 @@ ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
 #=================================================
 # MODIFY ORIGINAL APTICRON CRON FILE
 #=================================================
+ynh_script_progression --message="Modify original Apticron cron file" --weight=3
 
 apticron_cron="/etc/cron.d/apticron"
 # Copy and comment the current cron
@@ -155,16 +164,22 @@ fi
 # Get main domain and buid the url of the admin panel of the app.
 admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
 
-message="To modify any option of unattended-upgrades, please have a look to $unattended_upgrades_config and 
+echo "To modify any option of unattended-upgrades, please have a look to $unattended_upgrades_config and 
 /etc/apt/apt.conf.d/02periodic
 Unattended-upgrades will be executed every day at midnight.
 
 To modify the configuration of apticron, please have a look to $apticron_config.
 Apticron will be executed, depending of the requested configuration at 8 p.m. and 2 a.m. If you want to change this schedule, please have a look to the cron file $apticron_cron.
 
-You can configure this app easily by using the experimental config-panel feature: $admin_panel/config-panel.
-You can also find some specific actions for this app by using the experimental action feature: $admin_panel/actions.
+You can configure this app easily by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__.
+You can also find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__.
 
-If you're facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
+If you're facing an issue or want to improve this app, please open a new issue in this __URL_TAG1__project__URL_TAG2__https://github.com/YunoHost-Apps/unattended_upgrades_ynh__URL_TAG3__." > mail_to_send
 
-ynh_send_readme_to_admin --app_message="$message" --recipients="root" --type="install"
+ynh_send_readme_to_admin --app_message="mail_to_send" --recipients="root" --type="install"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation completed" --last

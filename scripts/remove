@@ -12,6 +12,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Load settings"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -20,6 +21,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # REMOVE DEPENDENCIES
 #=================================================
+ynh_script_progression --message="Remove dependencies" --weight=5
 
 ynh_remove_app_dependencies
 
@@ -28,11 +30,19 @@ ynh_remove_app_dependencies
 #=================================================
 # REMOVE THE APT PERIODIC FILE
 #=================================================
+ynh_script_progression --message="Remove the APT Periodic file"
 
 ynh_secure_remove "/etc/apt/apt.conf.d/02periodic"
 
 #=================================================
 # DECONFIGURE UNATTENDED-UPGRADES
 #=================================================
+ynh_script_progression --message="Deconfigure unattended-upgrades"
 
 mv "/etc/apt/50unattended-upgrades.backup" "/etc/apt/apt.conf.d/50unattended-upgrades"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Deletion completed" --last

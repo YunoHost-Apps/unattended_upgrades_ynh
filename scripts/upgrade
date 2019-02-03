@@ -14,6 +14,7 @@ source _variables
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Load settings"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -29,6 +30,7 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
+ynh_script_progression --message="Ensure downward compatibility"
 
 # If overwrite_periodic doesn't exist, create it
 if [ -z "$overwrite_periodic" ]; then
@@ -39,8 +41,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-
-# It's impossible to make a backup here, because the backup name is going to have 32 characters. Which is not allowed...
+ynh_script_progression --message="Backup the app before upgrading" --weight=3
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -56,6 +57,7 @@ ynh_abort_if_errors
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
+ynh_script_progression --message="Upgrade dependencies" --weight=5
 
 ynh_install_app_dependencies $app_depencencies
 
@@ -80,6 +82,7 @@ ynh_install_app_dependencies $app_depencencies
 # Overwrite 02periodic config file only if it's allowed
 if [ $overwrite_periodic -eq 1 ]
 then
+	ynh_script_progression --message="Upgrade APT Periodic for Unattended" --weight=3
 	ynh_backup_if_checksum_is_different "/etc/apt/apt.conf.d/02periodic"
 
 	cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
@@ -104,16 +107,30 @@ fi
 # Get main domain and buid the url of the admin panel of the app.
 admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
 
-message="To modify any option of unattended-upgrades, please have a look to /etc/apt/apt.conf.d/50unattended-upgrades and 
+# Build the changelog
+ynh_app_changelog || true
+
+echo "To modify any option of unattended-upgrades, please have a look to /etc/apt/apt.conf.d/50unattended-upgrades and 
 /etc/apt/apt.conf.d/02periodic
 Unattended-upgrades will be executed every day at midnight.
 
 To modify the configuration of apticron, please have a look to /etc/apticron/apticron.conf.
 Apticron will be executed, depending of the requested configuration at 8 p.m. and 2 a.m. If you want to change this schedule, please have a look to the cron file /etc/cron.d/apticron.
 
-You can configure this app easily by using the experimental config-panel feature: $admin_panel/config-panel.
-You can also find some specific actions for this app by using the experimental action feature: $admin_panel/actions.
+You can configure this app easily by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__.
+You can also find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__.
 
-If you're facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
+If you're facing an issue or want to improve this app, please open a new issue in this __URL_TAG1__project__URL_TAG2__https://github.com/YunoHost-Apps/unattended_upgrades_ynh__URL_TAG3__.
 
-ynh_send_readme_to_admin --app_message="$message" --recipients="root" --type="upgrade"
+---
+
+Changelog since your last upgrade:
+$(cat changelog)" > mail_to_send
+
+ynh_send_readme_to_admin --app_message="mail_to_send" --recipients="root" --type="upgrade"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Upgrade completed" --last

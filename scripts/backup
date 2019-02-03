@@ -19,6 +19,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Load settings"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -27,6 +28,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # BACKUP UNATTENDED-UPGRADES CONFIG
 #=================================================
+ynh_script_progression --message="Backup unattended-upgrades config"
 
 ynh_backup "/etc/apt/apt.conf.d/50unattended-upgrades"
 # Backup also the backup of the config file
@@ -35,17 +37,26 @@ ynh_backup "/etc/apt/50unattended-upgrades.backup"
 #=================================================
 # BACKUP APT PERIODIC
 #=================================================
+ynh_script_progression --message="Backup APT periodic"
 
 ynh_backup "/etc/apt/apt.conf.d/02periodic"
 
 #=================================================
 # BACKUP APTICRON CONFIG
 #=================================================
+ynh_script_progression --message="Backup Apticron config"
 
 ynh_backup "/etc/apticron/apticron.conf"
 
 #=================================================
 # BACKUP THE CRON FILE
 #=================================================
+ynh_script_progression --message="Backup cron file"
 
 ynh_backup "/etc/cron.d/apticron"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Backup completed" --last

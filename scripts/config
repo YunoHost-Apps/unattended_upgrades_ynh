@@ -63,6 +63,11 @@ old_overwrite_periodic="$(ynh_app_setting_get $app overwrite_periodic)"
 old_overwrite_periodic=$(bool_to_true_false $old_overwrite_periodic)
 overwrite_periodic="${YNH_CONFIG_MAIN_OVERWRITE_FILES_OVERWRITE_PERIODIC:-$old_overwrite_periodic}"
 
+# Type of admin mail configuration
+old_admin_mail_html="$(ynh_app_setting_get $app admin_mail_html)"
+old_admin_mail_html=$(bool_to_true_false $old_admin_mail_html)
+admin_mail_html="${YNH_CONFIG_MAIN_GLOBAL_CONFIG_EMAIL_TYPE:-$old_admin_mail_html}"
+
 #=================================================
 # SHOW_CONFIG FUNCTION FOR 'SHOW' COMMAND
 #=================================================
@@ -83,6 +88,8 @@ show_config() {
 	echo "YNH_CONFIG_MAIN_PERIODIC_CONFIGURATION_UNATTENDED_VERBOSITY=$unattended_verbosity"
 
 	echo "YNH_CONFIG_MAIN_OVERWRITE_FILES_OVERWRITE_PERIODIC=$overwrite_periodic"
+
+	echo "YNH_CONFIG_MAIN_GLOBAL_CONFIG_EMAIL_TYPE=$admin_mail_html"
 }
 
 #=================================================
@@ -207,6 +214,10 @@ apply_config() {
 	# Set overwrite_periodic
 	overwrite_periodic=$(bool_to_01 $overwrite_periodic)
 	ynh_app_setting_set $app overwrite_periodic "$overwrite_periodic"
+
+	# Set admin_mail_html
+	admin_mail_html=$(bool_to_01 $admin_mail_html)
+	ynh_app_setting_set $app admin_mail_html "$admin_mail_html"
 }
 
 #=================================================

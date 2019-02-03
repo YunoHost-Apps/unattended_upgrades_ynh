@@ -21,6 +21,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_script_progression --message="Load settings"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -29,6 +30,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
+ynh_script_progression --message="Reinstall dependencies" --weight=10
 
 ynh_install_app_dependencies $app_depencencies
 
@@ -67,16 +69,22 @@ ynh_restore_file "/etc/cron.d/apticron"
 # Get main domain and buid the url of the admin panel of the app.
 admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
 
-message="To modify any option of unattended-upgrades, please have a look to /etc/apt/apt.conf.d/50unattended-upgrades and 
+echo "To modify any option of unattended-upgrades, please have a look to /etc/apt/apt.conf.d/50unattended-upgrades and 
 /etc/apt/apt.conf.d/02periodic
 Unattended-upgrades will be executed every day at midnight.
 
 To modify the configuration of apticron, please have a look to /etc/apticron/apticron.conf.
 Apticron will be executed, depending of the requested configuration at 8 p.m. and 2 a.m. If you want to change this schedule, please have a look to the cron file /etc/cron.d/apticron.
 
-You can configure this app easily by using the experimental config-panel feature: $admin_panel/config-panel.
-You can also find some specific actions for this app by using the experimental action feature: $admin_panel/actions.
+You can configure this app easily by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__.
+You can also find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__.
 
-If you're facing an issue or want to improve this app, please open a new issue in this project: https://github.com/YunoHost-Apps/unattended_upgrades_ynh"
+If you're facing an issue or want to improve this app, please open a new issue in this __URL_TAG1__project__URL_TAG2__https://github.com/YunoHost-Apps/unattended_upgrades_ynh__URL_TAG3__." > mail_to_send
 
-ynh_send_readme_to_admin --app_message="$message" --recipients="root" --type="restore"
+ynh_send_readme_to_admin --app_message="mail_to_send" --recipients="root" --type="restore"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Restoration completed" --last
