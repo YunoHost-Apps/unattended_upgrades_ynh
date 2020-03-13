@@ -43,9 +43,9 @@ With its cron file
 
 #### Supported architectures
 
-* x86-64b - [![](https://ci-apps.yunohost.org/ci/logs/unattended_upgrades%20%28Community%29.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/)
-* ARMv8-A - [![](https://ci-apps-arm.yunohost.org/ci/logs/unattended_upgrades%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/unattended_upgrades/)
-* Jessie x86-64b - [![](https://ci-stretch.nohost.me/ci/logs/unattended_upgrades%20%28Community%29.svg)](https://ci-stretch.nohost.me/ci/apps/unattended_upgrades/)
+* x86-64b - [![](https://ci-apps.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/)
+* ARMv8-A - [![](https://ci-apps-arm.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/unattended_upgrades/)
+* Jessie x86-64b - [![](https://ci-stretch.nohost.me/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/unattended_upgrades/)
 
 ## Limitations
 
