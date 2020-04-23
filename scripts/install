@@ -6,10 +6,11 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-source _common.sh
-source /usr/share/yunohost/helpers
 # Load common variables for all scripts.
 source _variables
+
+source _common.sh
+source /usr/share/yunohost/helpers
 
 #=================================================
 # MANAGE FAILURE OF THE SCRIPT
@@ -21,38 +22,37 @@ ynh_abort_if_errors
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
-ynh_script_progression --message="Retrieve arguments from the manifest"
 
 upgrade_level="$YNH_APP_ARG_UPGRADE_LEVEL"
-ynh_update="$YNH_APP_ARG_YNH_UPDATE"
-previous_apticron="$YNH_APP_ARG_PREVIOUS_APTICRON"
-after_apticron="$YNH_APP_ARG_AFTER_APTICRON"
+ynh_update=$YNH_APP_ARG_YNH_UPDATE
+previous_apticron=$YNH_APP_ARG_PREVIOUS_APTICRON
+after_apticron=$YNH_APP_ARG_AFTER_APTICRON
 unattended_mail="$YNH_APP_ARG_UNATTENDED_MAIL"
-unattended_verbosity="$YNH_APP_ARG_UNATTENDED_VERBOSITY"
+unattended_verbosity=$YNH_APP_ARG_UNATTENDED_VERBOSITY
 
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_script_progression --message="Store settings from manifest" --weight=3
+ynh_script_progression --message="Storing installation settings..." --weight=3
 
-ynh_app_setting_set $app upgrade_level "$upgrade_level"
-ynh_app_setting_set $app ynh_update $ynh_update
-ynh_app_setting_set $app previous_apticron $previous_apticron
-ynh_app_setting_set $app after_apticron $after_apticron
-ynh_app_setting_set $app unattended_mail "$unattended_mail"
-ynh_app_setting_set $app unattended_verbosity $unattended_verbosity
+ynh_app_setting_set --app=$app --key=upgrade_level --value="$upgrade_level"
+ynh_app_setting_set --app=$app --key=ynh_update --value=$ynh_update
+ynh_app_setting_set --app=$app --key=previous_apticron --value=$previous_apticron
+ynh_app_setting_set --app=$app --key=after_apticron --value=$after_apticron
+ynh_app_setting_set --app=$app --key=unattended_mail --value="$unattended_mail"
+ynh_app_setting_set --app=$app --key=unattended_verbosity --value=$unattended_verbosity
 
-ynh_app_setting_set $app overwrite_periodic "1"
-ynh_app_setting_set $app admin_mail_html "1"
+ynh_app_setting_set --app=$app --key=overwrite_periodic --value=1
+ynh_app_setting_set --app=$app --key=admin_mail_html --value=1
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Install dependencies" --weight=10
+ynh_script_progression --message="Installing dependencies..." --weight=10
 
 ynh_install_app_dependencies $app_depencencies
 
@@ -61,62 +61,65 @@ ynh_install_app_dependencies $app_depencencies
 #=================================================
 # CONFIGURE APTICRON
 #=================================================
-ynh_script_progression --message="Configure Apticron"
+ynh_script_progression --message="Configuring Apticron..."
 
 apticron_config="/etc/apticron/apticron.conf"
-ynh_replace_string "# CUSTOM_SUBJECT=.*" \
-	"&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'" "$apticron_config"
-ynh_replace_string "# CUSTOM_NO_UPDATES_SUBJECT=.*" \
-	"&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\\\o/\'" "$apticron_config"
+# Create a backup of the config file for the reset action
+cp "$apticron_config" "/etc/yunohost/apps/$app/conf/apticron.conf.backup"
+
+ynh_replace_string --match_string="# CUSTOM_SUBJECT=.*" \
+    --replace_string="&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'" --target_file="$apticron_config"
+ynh_replace_string --match_string="# CUSTOM_NO_UPDATES_SUBJECT=.*" \
+    --replace_string="&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\\\o/\'" --target_file="$apticron_config"
 
 #=================================================
 # CONFIGURE UNATTENDED-UPGRADES
 #=================================================
-ynh_script_progression --message="Configure Unattended-Upgrades"
+ynh_script_progression --message="Configuring Unattended-Upgrades..."
 
 unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
 
 # Make a backup of 50unattended-upgrades
-cp -a "$unattended_upgrades_config" "/etc/apt/50unattended-upgrades.backup"
+cp "$unattended_upgrades_config" "/etc/apt/50unattended-upgrades.backup"
 
 # Configure upgrade sources
 # Allow other updates
 if [ "$upgrade_level" = "Security and updates" ]
 then
-	ynh_replace_string "//\(.*\"o=Debian,a=stable\)" "\1" "$unattended_upgrades_config"
-	ynh_replace_string "//\(.*\"o=Debian,a=stable-updates\)" "\1" "$unattended_upgrades_config"
+    ynh_replace_string --match_string="//\(.*\"o=Debian,a=stable\)" --replace_string="\1" --target_file="$unattended_upgrades_config"
+    ynh_replace_string --match_string="//\(.*\"o=Debian,a=stable-updates\)" --replace_string="\1" --target_file="$unattended_upgrades_config"
 fi
 
 # Add YunoHost upgrade source
 if [ $ynh_update -eq 1 ]
 then
-	ynh_replace_string "origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
-		"&\n\n        //YunoHost upgrade\n        \"o=YunoHost,a=stable\";" "$unattended_upgrades_config"
+    ynh_replace_string --match_string="origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
+        --replace_string="&\n\n        //YunoHost upgrade\n        \"o=YunoHost,a=stable\";" --target_file="$unattended_upgrades_config"
 fi
 
 # Allow MinimalSteps upgrading to reduce risk in case of reboot
-ynh_replace_string "//\(Unattended-Upgrade::MinimalSteps\).*" "\1 \"true\";" "$unattended_upgrades_config"
+ynh_replace_string --match_string="//\(Unattended-Upgrade::MinimalSteps\).*" --replace_string="\1 \"true\";" --target_file="$unattended_upgrades_config"
 
 # Configure Unattended Upgrades mailing
 if [ "$unattended_mail" = "If an upgrade has been done" ]
 then
-	# Allow mail to root
-	ynh_replace_string "//\(Unattended-Upgrade::Mail \)" "\1" "$unattended_upgrades_config"
+    # Allow mail to root
+    ynh_replace_string --match_string="//\(Unattended-Upgrade::Mail \)" --replace_string="\1" --target_file="$unattended_upgrades_config"
 
-	# Send mail even if there's no errors
-	ynh_replace_string "//\(Unattended-Upgrade::MailOnlyOnError \).*" "\1\"false\";" "$unattended_upgrades_config"
+    # Send mail even if there's no errors
+    ynh_replace_string --match_string="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"false\";" --target_file="$unattended_upgrades_config"
 
 elif [ "$unattended_mail" = "Only if there was an error" ]
 then
-	# Allow mail to root
-	ynh_replace_string "//\(Unattended-Upgrade::Mail \)" "\1" "$unattended_upgrades_config"
+    # Allow mail to root
+    ynh_replace_string --match_string="//\(Unattended-Upgrade::Mail \)" --replace_string="\1" --target_file="$unattended_upgrades_config"
 
-	# Send mail only if there's an error
-	ynh_replace_string "//\(Unattended-Upgrade::MailOnlyOnError \).*" "\1\"true\";" "$unattended_upgrades_config"
+    # Send mail only if there's an error
+    ynh_replace_string --match_string="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"true\";" --target_file="$unattended_upgrades_config"
 
 else	# "Never"
-	# Comment "Unattended-Upgrade::Mail" if it isn't already commented
-	ynh_replace_string "^\(Unattended-Upgrade::Mail \)" "//\1" "$unattended_upgrades_config"
+    # Comment "Unattended-Upgrade::Mail" if it isn't already commented
+    ynh_replace_string --match_string="^\(Unattended-Upgrade::Mail \)" --replace_string="//\1" --target_file="$unattended_upgrades_config"
 fi
 
 #=================================================
@@ -125,7 +128,7 @@ fi
 ynh_script_progression --message="Configure APT Periodic for Unattended" --weight=2
 
 cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
-ynh_replace_string "__VERBOSITY__" "$unattended_verbosity" "/etc/apt/apt.conf.d/02periodic"
+ynh_replace_string --match_string="__VERBOSITY__" --replace_string="$unattended_verbosity" --target_file="/etc/apt/apt.conf.d/02periodic"
 # This config file is used by /etc/cron.daily/apt
 
 ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
@@ -136,23 +139,26 @@ ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
 ynh_script_progression --message="Modify original Apticron cron file" --weight=3
 
 apticron_cron="/etc/cron.d/apticron"
+# Create a backup of the cron file for the reset action
+cp "$apticron_cron" "/etc/yunohost/apps/$app/conf/apticron.crond.backup"
+
 # Copy and comment the current cron
-ynh_replace_string "^.* root if.*" "#&\n&" "$apticron_cron"
+ynh_replace_string --match_string="^.* root if.*" --replace_string="#&\n&" --target_file="$apticron_cron"
 # Modify the time to set at 20:00 every day
-ynh_replace_string "^[[:digit:]].*\( root if.*\)" "0 20 * * *\1" "$apticron_cron"
+ynh_replace_string --match_string="^[[:digit:]].*\( root if.*\)" --replace_string="0 20 * * *\1" --target_file="$apticron_cron"
 # Copy the new cron and set the time to 2:00 every night
-ynh_replace_string "^0 20\(.*\)" "&\n0 2\1" "$apticron_cron"
+ynh_replace_string --match_string="^0 20\(.*\)" --replace_string="&\n0 2\1" --target_file="$apticron_cron"
 
 if [ $previous_apticron -eq 0 ]
 then
-	# Comment the first cron
-	ynh_replace_string "^0 20 .*" "#&" "$apticron_cron"
+    # Comment the first cron
+    ynh_replace_string --match_string="^0 20 .*" --replace_string="#&" --target_file="$apticron_cron"
 fi
 
 if [ $after_apticron -eq 0 ]
 then
-	# Comment the second cron
-	ynh_replace_string "^0 2 .*" "#&" "$apticron_cron"
+    # Comment the second cron
+    ynh_replace_string --match_string="^0 2 .*" --replace_string="#&" --target_file="$apticron_cron"
 fi
 
 #=================================================
@@ -176,10 +182,10 @@ You can also find some specific actions for this app by using the experimental _
 
 If you're facing an issue or want to improve this app, please open a new issue in this __URL_TAG1__project__URL_TAG2__https://github.com/YunoHost-Apps/unattended_upgrades_ynh__URL_TAG3__." > mail_to_send
 
-ynh_send_readme_to_admin --app_message="mail_to_send" --recipients="root" --type="install"
+ynh_send_readme_to_admin --app_message="mail_to_send" --recipients=root --type=install
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation completed" --last
+ynh_script_progression --message="Installation of $app completed" --last

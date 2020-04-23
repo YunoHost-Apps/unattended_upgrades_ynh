@@ -6,20 +6,21 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-source _common.sh
-source /usr/share/yunohost/helpers
 # Load common variables for all scripts.
 source _variables
+
+source _common.sh
+source /usr/share/yunohost/helpers
 
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Load settings"
+ynh_script_progression --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-unattended_verbosity=$(ynh_app_setting_get $app unattended_verbosity)
-overwrite_periodic=$(ynh_app_setting_get $app overwrite_periodic)
+unattended_verbosity=$(ynh_app_setting_get --app=$app --key=unattended_verbosity)
+overwrite_periodic=$(ynh_app_setting_get --app=$app --key=overwrite_periodic)
 
 #=================================================
 # CHECK VERSION
@@ -30,24 +31,46 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_script_progression --message="Ensure downward compatibility"
+ynh_script_progression --message="Ensuring downward compatibility..."
 
 # If overwrite_periodic doesn't exist, create it
 if [ -z "$overwrite_periodic" ]; then
-	overwrite_periodic=1
-	ynh_app_setting_set $app overwrite_periodic $overwrite_periodic
+    overwrite_periodic=1
+    ynh_app_setting_set --app=$app --key=overwrite_periodic --value=$overwrite_periodic
+fi
+
+# If admin_mail_html doesn't exist, create it
+if [ -z "$admin_mail_html" ]; then
+    admin_mail_html=1
+    ynh_app_setting_set --app=$app --key=admin_mail_html --value=$admin_mail_html
+fi
+
+# Make a non perfect backup for apticron.conf if non existent
+if [ ! -e "../conf/apticron.conf.backup" ]; then
+    # Create a backup of the config file for the reset action
+    cp "/etc/apticron/apticron.conf" "../conf/apticron.conf.backup"
+    sed --in-place '/^CUSTOM_SUBJECT=/d' "../conf/apticron.conf.backup"
+    sed --in-place '/^CUSTOM_NO_UPDATES_SUBJECT=/d' "../conf/apticron.conf.backup"
+fi
+
+# Make a non perfect backup for apticron cron file if non existent
+if [ ! -e "../conf/apticron.crond.backup" ]; then
+    # Create a backup of the config file for the reset action
+    cp "/etc/cron.d/apticron" "../conf/apticron.crond.backup"
+    sed --in-place '/^[[:digit:]]/d' "../conf/apticron.crond.backup"
+    ynh_replace_string --match_string="^#\([[:digit:]].*\)" --replace_string="\1" --target_file="../conf/apticron.crond.backup"
 fi
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backup the app before upgrading" --weight=3
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=3
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
-	# restore it if the upgrade fails
-	ynh_restore_upgradebackup
+    # restore it if the upgrade fails
+    ynh_restore_upgradebackup
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -57,7 +80,7 @@ ynh_abort_if_errors
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Upgrade dependencies" --weight=5
+ynh_script_progression --message="Upgrading dependencies..." --weight=5
 
 ynh_install_app_dependencies $app_depencencies
 
@@ -82,14 +105,14 @@ ynh_install_app_dependencies $app_depencencies
 # Overwrite 02periodic config file only if it's allowed
 if [ $overwrite_periodic -eq 1 ]
 then
-	ynh_script_progression --message="Upgrade APT Periodic for Unattended" --weight=3
-	ynh_backup_if_checksum_is_different "/etc/apt/apt.conf.d/02periodic"
+    ynh_script_progression --message="Upgrading APT Periodic for Unattended..." --weight=3
+    ynh_backup_if_checksum_is_different --file="/etc/apt/apt.conf.d/02periodic"
 
-	cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
-	ynh_replace_string "__VERBOSITY__" "$unattended_verbosity" "/etc/apt/apt.conf.d/02periodic"
-	# This config file is used by /etc/cron.daily/apt
+    cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
+    ynh_replace_string --match_string="__VERBOSITY__" --replace_string="$unattended_verbosity" --target_file="/etc/apt/apt.conf.d/02periodic"
+    # This config file is used by /etc/cron.daily/apt
 
-	ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
+    ynh_store_file_checksum --file="/etc/apt/apt.conf.d/02periodic"
 fi
 
 #=================================================
@@ -132,10 +155,10 @@ If you're facing an issue or want to improve this app, please open a new issue i
 Changelog since your last upgrade:
 $(cat changelog)" > mail_to_send
 
-ynh_send_readme_to_admin --app_message="mail_to_send" --recipients="root" --type="upgrade"
+ynh_send_readme_to_admin --app_message="mail_to_send" --recipients=root --type=upgrade
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade completed" --last
+ynh_script_progression --message="Upgrade of $app completed" --last
