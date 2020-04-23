@@ -1,0 +1,80 @@
+version = "0.1"
+name = "Unattended-upgrades configuration panel"
+
+[main]
+name = "Unattended-upgrades configuration"
+
+
+    [main.unattended_configuration]
+    name = "50unattended-upgrades configuration file"
+
+        [main.unattended_configuration.upgrade_level]
+        ask = "Choose the sources of packages to automatically upgrade."
+        choices = ["Security only", "Security and updates"]
+        default = "Security only"
+
+        [main.unattended_configuration.ynh_update]
+        ask = "Would you like to update YunoHost packages automatically ?"
+        type = "boolean"
+        default = true
+
+        [main.unattended_configuration.unattended_mail]
+        ask = "Would you like to receive an email from Unattended-Upgrades ?"
+        choices = ["If an upgrade has been done", "Only if there was an error", "Never"]
+        default = "If an upgrade has been done"
+
+
+    [main.apticron_configuration]
+    name = "apticron cron file"
+
+        [main.apticron_configuration.previous_apticron]
+        ask = "Would you like to receive an email to inform which upgrades need to be done ?"
+        type = "boolean"
+        default = true
+
+        [main.apticron_configuration.previous_apticron_hour]
+        ask = "When do you want to receive this email ?"
+        type = "number"
+        default = "20"
+        help = "Choose an hour between 12 and 23."
+
+        [main.apticron_configuration.after_apticron]
+        ask = "Would you like to receive an email to verify if there any upgrades left after each auto upgrade ?"
+        type = "boolean"
+        default = true
+
+        [main.apticron_configuration.after_apticron_hour]
+        ask = "When do you want to receive this email ?"
+        type = "number"
+        default = "2"
+        help = "Choose an hour between 0 and 10."
+
+
+    [main.periodic_configuration]
+    name = "02periodic apt config file"
+
+        [main.periodic_configuration.unattended_verbosity]
+        ask = "Choose the level of verbosity of Unattended-Upgrades mail."
+        choices = ["1", "2", "3"]
+        default = "1"
+        help = "1: Progress report only.<br>2: Progress report and command outputs.<br>3: Progress report and command outputs and trace."
+
+
+    [main.overwrite_files]
+    name = "Overwriting config files"
+
+        [main.overwrite_files.overwrite_periodic]
+        ask = "Overwrite the config file 02periodic ?"
+        type = "boolean"
+        default = true
+        help = "If the file is overwritten, a backup will be created."
+
+
+    [main.global_config]
+    name = "Global configuration"
+
+        [main.global_config.email_type]
+        ask = "Send HTML email to admin ?"
+        type = "boolean"
+        default = true
+        help = "Allow app scripts to send HTML mails instead of plain text."
