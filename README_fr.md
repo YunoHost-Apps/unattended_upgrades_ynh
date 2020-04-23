@@ -1,6 +1,6 @@
 # Unattended-upgrades pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://dash.yunohost.org/appci/app/unattended_upgrades)  
+[![Niveau d'intégration](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://dash.yunohost.org/appci/app/unattended_upgrades) ![](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) [![](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)](https://github.com/YunoHost/Apps/#what-to-do-if-i-cant-maintain-my-app-anymore-)  
 [![Installer Unattended-upgrades avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=unattended_upgrades)
 
 *[Read this readme in english.](./README.md)*
@@ -45,7 +45,7 @@ Avec son cron
 
 * x86-64b - [![](https://ci-apps.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/)
 * ARMv8-A - [![](https://ci-apps-arm.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/unattended_upgrades/)
-* Jessie x86-64b - [![](https://ci-stretch.nohost.me/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/unattended_upgrades/)
+* Buster x86-64b - [![](https://ci-buster.nohost.me/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-buster.nohost.me/ci/apps/unattended_upgrades/)
 
 ## Limitations
 
@@ -65,7 +65,7 @@ Merci de faire vos pull request sur la [branche testing](https://github.com/Yuno
 
 Pour tester la branche testing, merci de procéder ainsi.
 ```
-sudo yunohost app install https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing --debug
+sudo yunohost app install https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing --force --debug
 ou
 sudo yunohost app upgrade unattended_upgrades -u https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing --debug
 ```
