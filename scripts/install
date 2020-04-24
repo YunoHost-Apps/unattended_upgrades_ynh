@@ -64,6 +64,11 @@ ynh_install_app_dependencies $app_depencencies
 ynh_script_progression --message="Configuring Apticron..."
 
 apticron_config="/etc/apticron/apticron.conf"
+# If the config file doesn't exist, copy the model
+if [ ! -e "$apticron_config" ]
+then
+    cp "/usr/lib/apticron/apticron.conf" "$apticron_config"
+fi
 # Create a backup of the config file for the reset action
 cp "$apticron_config" "/etc/yunohost/apps/$app/conf/apticron.conf.backup"
 
