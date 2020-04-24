@@ -4,6 +4,22 @@ Changelog
 ## Unreleased
 - Nothing for now...
 
+## [1.0~ynh5](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/13) - 2019-04-24
+
+#### Added
+* [Add a changelog](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/13/commits/054a7f4e0c98e2ade70779a9f470ef1d0d50413e)
+- [New badges](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/13/commits/477f7f3f178336ec03882fe3ec4e718c745ecda2)
+
+#### Fixed
+- [Fix Buster](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/13/commits/fa7afd13e1657948a07a3f05227e5b6d26bdd9de)
+
+#### Changed
+- [Update to last standard](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/13/commits/f7ad5779f7074bfaafd1bf4653bfeaf2ddc0880d)
+- [Update helpers](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/13/commits/02e6b338b17ddd468875865edc8bd9c5ad741381)
+- [Update config-panel and actions](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/13/commits/f37594eb5df701e70ce884354e4f5ad3371b3d8b)
+- [Global upgrade](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/13/commits/74210eea818d76a35f1f9872029b267300ff5c46)
+
+
 ## [1.0~ynh4](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/9) - 2019-02-03
 
 #### Added
