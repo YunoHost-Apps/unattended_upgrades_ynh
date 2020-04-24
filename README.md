@@ -1,6 +1,6 @@
 # Unattended-upgrades for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://dash.yunohost.org/appci/app/unattended_upgrades)  
+[![Integration level](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://dash.yunohost.org/appci/app/unattended_upgrades) ![](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) [![](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)](https://github.com/YunoHost/Apps/#what-to-do-if-i-cant-maintain-my-app-anymore-)  
 [![Install Unattended-upgrades with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=unattended_upgrades)
 
 *[Lire ce readme en français.](./README_fr.md)*
@@ -43,9 +43,9 @@ With its cron file
 
 #### Supported architectures
 
-* x86-64b - [![](https://ci-apps.yunohost.org/ci/logs/unattended_upgrades%20%28Community%29.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/)
-* ARMv8-A - [![](https://ci-apps-arm.yunohost.org/ci/logs/unattended_upgrades%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/unattended_upgrades/)
-* Jessie x86-64b - [![](https://ci-stretch.nohost.me/ci/logs/unattended_upgrades%20%28Community%29.svg)](https://ci-stretch.nohost.me/ci/apps/unattended_upgrades/)
+* x86-64b - [![](https://ci-apps.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/)
+* ARMv8-A - [![](https://ci-apps-arm.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/unattended_upgrades/)
+* Buster x86-64b - [![](https://ci-buster.nohost.me/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-buster.nohost.me/ci/apps/unattended_upgrades/)
 
 ## Limitations
 
@@ -65,7 +65,7 @@ Please do your pull request to the [testing branch](https://github.com/YunoHost-
 
 To try the testing branch, please proceed like that.
 ```
-sudo yunohost app install https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing --debug
+sudo yunohost app install https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing --force --debug
 or
 sudo yunohost app upgrade unattended_upgrades -u https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing --debug
 ```

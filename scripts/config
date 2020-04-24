@@ -13,9 +13,9 @@ source /usr/share/yunohost/helpers
 # RETRIEVE ARGUMENTS
 #=================================================
 
-app=${YNH_APP_INSTANCE_NAME:-$YNH_APP_ID}
+app=$YNH_APP_INSTANCE_NAME
 
-final_path=$(ynh_app_setting_get $app final_path)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 #=================================================
 # SPECIFIC CODE
@@ -29,43 +29,47 @@ final_path=$(ynh_app_setting_get $app final_path)
 # Otherwise, keep the value from the app config.
 
 # upgrade_level
-old_upgrade_level="$(ynh_app_setting_get $app upgrade_level)"
+old_upgrade_level="$(ynh_app_setting_get --app=$app --key=upgrade_level)"
 upgrade_level="${YNH_CONFIG_MAIN_UNATTENDED_CONFIGURATION_UPGRADE_LEVEL:-$old_upgrade_level}"
+
 # ynh_update
-old_ynh_update="$(ynh_app_setting_get $app ynh_update)"
-old_ynh_update=$(bool_to_true_false $old_ynh_update)
+old_ynh_update="$(ynh_app_setting_get --app=$app --key=ynh_update)"
 ynh_update="${YNH_CONFIG_MAIN_UNATTENDED_CONFIGURATION_YNH_UPDATE:-$old_ynh_update}"
+
 # unattended_mail
-old_unattended_mail="$(ynh_app_setting_get $app unattended_mail)"
+old_unattended_mail="$(ynh_app_setting_get --app=$app --key=unattended_mail)"
 unattended_mail="${YNH_CONFIG_MAIN_UNATTENDED_CONFIGURATION_UNATTENDED_MAIL:-$old_unattended_mail}"
 
+
 # previous_apticron
-old_previous_apticron="$(ynh_app_setting_get $app previous_apticron)"
-old_previous_apticron=$(bool_to_true_false $old_previous_apticron)
+old_previous_apticron="$(ynh_app_setting_get --app=$app --key=previous_apticron)"
 previous_apticron="${YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_PREVIOUS_APTICRON:-$old_previous_apticron}"
+
 # previous_apticron_hour
 old_previous_apticron_hour="$(cat /etc/cron.d/apticron | grep --max-count=1 "^#*0.*root if.*" | cut -d' ' -f2)"
 previous_apticron_hour="${YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_PREVIOUS_APTICRON_HOUR:-$old_previous_apticron_hour}"
+
 # after_apticron
-old_after_apticron="$(ynh_app_setting_get $app after_apticron)"
-old_after_apticron=$(bool_to_true_false $old_after_apticron)
+old_after_apticron="$(ynh_app_setting_get --app=$app --key=after_apticron)"
 after_apticron="${YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_AFTER_APTICRON:-$old_after_apticron}"
+
 # after_apticron_hour
 old_after_apticron_hour="$(tac /etc/cron.d/apticron | grep --max-count=1 "^#*0.*root if.*" | cut -d' ' -f2)"
 after_apticron_hour="${YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_AFTER_APTICRON_HOUR:-$old_after_apticron_hour}"
 
+
 # unattended_verbosity
-old_unattended_verbosity="$(ynh_app_setting_get $app unattended_verbosity)"
+old_unattended_verbosity="$(ynh_app_setting_get --app=$app --key=unattended_verbosity)"
 unattended_verbosity="${YNH_CONFIG_MAIN_PERIODIC_CONFIGURATION_UNATTENDED_VERBOSITY:-$old_unattended_verbosity}"
 
+
 # Overwrite 02periodic config file
-old_overwrite_periodic="$(ynh_app_setting_get $app overwrite_periodic)"
-old_overwrite_periodic=$(bool_to_true_false $old_overwrite_periodic)
+old_overwrite_periodic="$(ynh_app_setting_get --app=$app --key=overwrite_periodic)"
 overwrite_periodic="${YNH_CONFIG_MAIN_OVERWRITE_FILES_OVERWRITE_PERIODIC:-$old_overwrite_periodic}"
 
+
 # Type of admin mail configuration
-old_admin_mail_html="$(ynh_app_setting_get $app admin_mail_html)"
-old_admin_mail_html=$(bool_to_true_false $old_admin_mail_html)
+old_admin_mail_html="$(ynh_app_setting_get --app=$app --key=admin_mail_html)"
 admin_mail_html="${YNH_CONFIG_MAIN_GLOBAL_CONFIG_EMAIL_TYPE:-$old_admin_mail_html}"
 
 #=================================================
@@ -73,23 +77,23 @@ admin_mail_html="${YNH_CONFIG_MAIN_GLOBAL_CONFIG_EMAIL_TYPE:-$old_admin_mail_htm
 #=================================================
 
 show_config() {
-	# here you are supposed to read some config file/database/other then print the values
-	# echo "YNH_CONFIG_${PANEL_ID}_${SECTION_ID}_${OPTION_ID}=value"
+    # here you are supposed to read some config file/database/other then print the values
+    # ynh_return "YNH_CONFIG_${PANEL_ID}_${SECTION_ID}_${OPTION_ID}=value"
 
-	echo "YNH_CONFIG_MAIN_UNATTENDED_CONFIGURATION_UPGRADE_LEVEL=$upgrade_level"
-	echo "YNH_CONFIG_MAIN_UNATTENDED_CONFIGURATION_YNH_UPDATE=$ynh_update"
-	echo "YNH_CONFIG_MAIN_UNATTENDED_CONFIGURATION_UNATTENDED_MAIL=$unattended_mail"
+    ynh_return "YNH_CONFIG_MAIN_UNATTENDED_CONFIGURATION_UPGRADE_LEVEL=$upgrade_level"
+    ynh_return "YNH_CONFIG_MAIN_UNATTENDED_CONFIGURATION_YNH_UPDATE=$ynh_update"
+    ynh_return "YNH_CONFIG_MAIN_UNATTENDED_CONFIGURATION_UNATTENDED_MAIL=$unattended_mail"
 
-	echo "YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_PREVIOUS_APTICRON=$previous_apticron"
-	echo "YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_PREVIOUS_APTICRON_HOUR=$previous_apticron_hour"
-	echo "YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_AFTER_APTICRON=$after_apticron"
-	echo "YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_AFTER_APTICRON_HOUR=$after_apticron_hour"
+    ynh_return "YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_PREVIOUS_APTICRON=$previous_apticron"
+    ynh_return "YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_PREVIOUS_APTICRON_HOUR=$previous_apticron_hour"
+    ynh_return "YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_AFTER_APTICRON=$after_apticron"
+    ynh_return "YNH_CONFIG_MAIN_APTICRON_CONFIGURATION_AFTER_APTICRON_HOUR=$after_apticron_hour"
 
-	echo "YNH_CONFIG_MAIN_PERIODIC_CONFIGURATION_UNATTENDED_VERBOSITY=$unattended_verbosity"
+    ynh_return "YNH_CONFIG_MAIN_PERIODIC_CONFIGURATION_UNATTENDED_VERBOSITY=$unattended_verbosity"
 
-	echo "YNH_CONFIG_MAIN_OVERWRITE_FILES_OVERWRITE_PERIODIC=$overwrite_periodic"
+    ynh_return "YNH_CONFIG_MAIN_OVERWRITE_FILES_OVERWRITE_PERIODIC=$overwrite_periodic"
 
-	echo "YNH_CONFIG_MAIN_GLOBAL_CONFIG_EMAIL_TYPE=$admin_mail_html"
+    ynh_return "YNH_CONFIG_MAIN_GLOBAL_CONFIG_EMAIL_TYPE=$admin_mail_html"
 }
 
 #=================================================
@@ -97,127 +101,126 @@ show_config() {
 #=================================================
 
 apply_config() {
-	# Change configuration if needed
-	unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
-	# upgrade_level
-	if [ "$upgrade_level" != "$old_upgrade_level" ]
-	then
-		if [ "$upgrade_level" = "Security and updates" ]
-		then
-			# Uncomment lines in the config
-			ynh_replace_string "//\( *\"o=Debian,a=stable\)" "  \1" "$unattended_upgrades_config"
-			ynh_replace_string "//\( *\"o=Debian,a=stable-updates\)" "  \1" "$unattended_upgrades_config"
-		else
-			# Comment lines in the config
-			ynh_replace_string "^  \( *\"o=Debian,a=stable\)" "//\1" "$unattended_upgrades_config"
-			ynh_replace_string "^  \( *\"o=Debian,a=stable-updates\)" "//\1" "$unattended_upgrades_config"
-		fi
-		ynh_app_setting_set $app upgrade_level "$upgrade_level"
-	fi
-	# ynh_update
-	if [ "$ynh_update" != "$old_ynh_update" ]
-	then
-		ynh_update=$(bool_to_01 $ynh_update)
-		if [ "$ynh_update" -eq 1 ]
-		then
-			# Add YunoHost upgrade source
-			ynh_replace_string "origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
-				"&\n\n        //YunoHost upgrade\n        \"o=YunoHost,a=stable\";" "$unattended_upgrades_config"
-		else
-			# Remove lines about YunoHost
-			sed --in-place '/YunoHost upgrade/d' "$unattended_upgrades_config"
-			sed --in-place '/o=YunoHost/d' "$unattended_upgrades_config"
-		fi
-		ynh_app_setting_set $app ynh_update "$ynh_update"
-	fi
-	# unattended_mail
-	if [ "$unattended_mail" != "$old_unattended_mail" ]
-	then
-		if [ "$unattended_mail" = "If an upgrade has been done" ]
-		then
-			# Allow mail to root
-			ynh_replace_string "/*\(Unattended-Upgrade::Mail \)" "\1" "$unattended_upgrades_config"
 
-			# Send mail even if there's no errors
-			ynh_replace_string "/*\(Unattended-Upgrade::MailOnlyOnError \).*" "\1\"false\";" "$unattended_upgrades_config"
+    #=================================================
+    # MODIFY 50UNATTENDED-UPGRADES CONFIG
+    #=================================================
 
-		elif [ "$unattended_mail" = "Only if there was an error" ]
-		then
-			# Allow mail to root
-			ynh_replace_string "/*\(Unattended-Upgrade::Mail \)" "\1" "$unattended_upgrades_config"
+    unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
+    # upgrade_level
+    if [ "$upgrade_level" != "$old_upgrade_level" ]
+    then
+        if [ "$upgrade_level" = "Security and updates" ]
+        then
+            # Uncomment lines in the config
+            ynh_replace_string --match_string="//\( *\"o=Debian,a=stable\)" --replace_string="  \1" --target_file="$unattended_upgrades_config"
+            ynh_replace_string --match_string="//\( *\"o=Debian,a=stable-updates\)" --replace_string="  \1" --target_file="$unattended_upgrades_config"
+        else
+            # Comment lines in the config
+            ynh_replace_string --match_string="^  \( *\"o=Debian,a=stable\)" --replace_string="//\1" --target_file="$unattended_upgrades_config"
+            ynh_replace_string --match_string="^  \( *\"o=Debian,a=stable-updates\)" --replace_string="//\1" --target_file="$unattended_upgrades_config"
+        fi
+        ynh_app_setting_set --app=$app --key=upgrade_level --value="$upgrade_level"
+    fi
+    # ynh_update
+    if [ "$ynh_update" != "$old_ynh_update" ]
+    then
+        if [ "$ynh_update" -eq 1 ]
+        then
+            # Add YunoHost upgrade source
+            ynh_replace_string --match_string="origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
+                --replace_string="&\n\n        //YunoHost upgrade\n        \"o=YunoHost,a=stable\";" --target_file="$unattended_upgrades_config"
+        else
+            # Remove lines about YunoHost
+            sed --in-place '/YunoHost upgrade/d' "$unattended_upgrades_config"
+            sed --in-place '/o=YunoHost/d' "$unattended_upgrades_config"
+        fi
+        ynh_app_setting_set --app=$app --key=ynh_update --value="$ynh_update"
+    fi
+    # unattended_mail
+    if [ "$unattended_mail" != "$old_unattended_mail" ]
+    then
+        if [ "$unattended_mail" = "If an upgrade has been done" ]
+        then
+            # Allow mail to root
+            ynh_replace_string --match_string="/*\(Unattended-Upgrade::Mail \)" --replace_string="\1" --target_file="$unattended_upgrades_config"
 
-			# Send mail only if there's an error
-			ynh_replace_string "/*\(Unattended-Upgrade::MailOnlyOnError \).*" "\1\"true\";" "$unattended_upgrades_config"
+            # Send mail even if there's no errors
+            ynh_replace_string --match_string="/*\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"false\";" --target_file="$unattended_upgrades_config"
 
-		else	# "Never"
-			# Comment "Unattended-Upgrade::Mail"
-			ynh_replace_string "^\(Unattended-Upgrade::Mail \)" "//\1" "$unattended_upgrades_config"
-		fi
-		ynh_app_setting_set $app unattended_mail "$unattended_mail"
-	fi
+        elif [ "$unattended_mail" = "Only if there was an error" ]
+        then
+            # Allow mail to root
+            ynh_replace_string --match_string="/*\(Unattended-Upgrade::Mail \)" --replace_string="\1" --target_file="$unattended_upgrades_config"
 
-	# previous_apticron
-	apticron_cron="/etc/cron.d/apticron"
-	if [ "$previous_apticron" != "$old_previous_apticron" ]
-	then
-		previous_apticron=$(bool_to_01 $previous_apticron)
-		if [ "$previous_apticron" = "1" ]
-		then
-			# Uncomment the first cron line
-			ynh_replace_string "^#\(0 $old_previous_apticron_hour .*\)" "\1" "$apticron_cron"
-		else
-			# Comment the first cron line
-			ynh_replace_string "^0 $old_previous_apticron_hour .*" "#&" "$apticron_cron"
-		fi
-		ynh_app_setting_set $app previous_apticron "$previous_apticron"
-	fi
-	# previous_apticron_hour
-	if [ "$previous_apticron_hour" != "$old_previous_apticron_hour" ]
-	then
-		# Use sed instead of ynh_replace_string to avoid the 'global' argument
-		sed --in-place "s/0 $old_previous_apticron_hour\( \* \* \* root if\)/0 $previous_apticron_hour\1/" "$apticron_cron"
-		ynh_app_setting_set $app previous_apticron_hour "$previous_apticron_hour"
-	fi
-	# after_apticron
-	if [ "$after_apticron" != "$old_after_apticron" ]
-	then
-		after_apticron=$(bool_to_01 $after_apticron)
-		if [ "$after_apticron" = "1" ]
-		then
-			# Uncomment the second cron line
-			ynh_replace_string "^#\(0 $old_after_apticron_hour .*\)" "\1" "$apticron_cron"
-		else
-			# Comment the second cron line
-			ynh_replace_string "^0 $old_after_apticron_hour .*" "#&" "$apticron_cron"
-		fi
-		ynh_app_setting_set $app after_apticron "$after_apticron"
-	fi
-	# after_apticron_hour
-	if [ "$after_apticron_hour" != "$old_after_apticron_hour" ]
-	then
-		# Use sed instead of ynh_replace_string to avoid the 'global' argument
-		sed --in-place "s/0 $old_after_apticron_hour\( \* \* \* root if\)/0 $after_apticron_hour\1/" "$apticron_cron"
-		ynh_app_setting_set $app after_apticron_hour "$after_apticron_hour"
-	fi
+            # Send mail only if there's an error
+            ynh_replace_string --match_string="/*\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"true\";" --target_file="$unattended_upgrades_config"
 
-	# unattended_verbosity
-	if [ "$unattended_verbosity" != "$old_unattended_verbosity" ]
-	then
-		ynh_backup_if_checksum_is_different "/etc/apt/apt.conf.d/02periodic"
+        else	# "Never"
+            # Comment "Unattended-Upgrade::Mail"
+            ynh_replace_string --match_string="^\(Unattended-Upgrade::Mail \)" --replace_string="//\1" --target_file="$unattended_upgrades_config"
+        fi
+        ynh_app_setting_set --app=$app --key=unattended_mail --value="$unattended_mail"
+    fi
 
-		ynh_replace_string "^APT::Periodic::Verbose \".*" "APT::Periodic::Verbose \"$unattended_verbosity\";" "/etc/apt/apt.conf.d/02periodic"
-		ynh_app_setting_set $app unattended_verbosity "$unattended_verbosity"
+    # previous_apticron
+    apticron_cron="/etc/cron.d/apticron"
+    if [ "$previous_apticron" != "$old_previous_apticron" ]
+    then
+        if [ "$previous_apticron" = "1" ]
+        then
+            # Uncomment the first cron line
+            ynh_replace_string --match_string="^#\(0 $old_previous_apticron_hour .*\)" --replace_string="\1" --target_file="$apticron_cron"
+        else
+            # Comment the first cron line
+            ynh_replace_string --match_string="^0 $old_previous_apticron_hour .*" --replace_string="#&" --target_file="$apticron_cron"
+        fi
+        ynh_app_setting_set --app=$app --key=previous_apticron --value="$previous_apticron"
+    fi
+    # previous_apticron_hour
+    if [ "$previous_apticron_hour" != "$old_previous_apticron_hour" ]
+    then
+        # Use sed instead of ynh_replace_string to avoid the 'global' argument
+        sed --in-place "s/0 $old_previous_apticron_hour\( \* \* \* root if\)/0 $previous_apticron_hour\1/" "$apticron_cron"
+        ynh_app_setting_set --app=$app --key=previous_apticron_hour --value="$previous_apticron_hour"
+    fi
+    # after_apticron
+    if [ "$after_apticron" != "$old_after_apticron" ]
+    then
+        if [ "$after_apticron" = "1" ]
+        then
+            # Uncomment the second cron line
+            ynh_replace_string --match_string="^#\(0 $old_after_apticron_hour .*\)" --replace_string="\1" --target_file="$apticron_cron"
+        else
+            # Comment the second cron line
+            ynh_replace_string --match_string="^0 $old_after_apticron_hour .*" --replace_string="#&" --target_file="$apticron_cron"
+        fi
+        ynh_app_setting_set --app=$app --key=after_apticron --value="$after_apticron"
+    fi
+    # after_apticron_hour
+    if [ "$after_apticron_hour" != "$old_after_apticron_hour" ]
+    then
+        # Use sed instead of ynh_replace_string to avoid the 'global' argument
+        sed --in-place "s/0 $old_after_apticron_hour\( \* \* \* root if\)/0 $after_apticron_hour\1/" "$apticron_cron"
+        ynh_app_setting_set --app=$app --key=after_apticron_hour --value="$after_apticron_hour"
+    fi
 
-		ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
-	fi
+    # unattended_verbosity
+    if [ "$unattended_verbosity" != "$old_unattended_verbosity" ]
+    then
+        ynh_backup_if_checksum_is_different --file="/etc/apt/apt.conf.d/02periodic"
 
-	# Set overwrite_periodic
-	overwrite_periodic=$(bool_to_01 $overwrite_periodic)
-	ynh_app_setting_set $app overwrite_periodic "$overwrite_periodic"
+        ynh_replace_string --match_string="^APT::Periodic::Verbose \".*" --replace_string="APT::Periodic::Verbose \"$unattended_verbosity\";" --target_file="/etc/apt/apt.conf.d/02periodic"
+        ynh_app_setting_set --app=$app --key=unattended_verbosity --value="$unattended_verbosity"
 
-	# Set admin_mail_html
-	admin_mail_html=$(bool_to_01 $admin_mail_html)
-	ynh_app_setting_set $app admin_mail_html "$admin_mail_html"
+        ynh_store_file_checksum --file="/etc/apt/apt.conf.d/02periodic"
+    fi
+
+    # Set overwrite_periodic
+    ynh_app_setting_set --app=$app --key=overwrite_periodic --value="$overwrite_periodic"
+
+    # Set admin_mail_html
+    ynh_app_setting_set --app=$app --key=admin_mail_html --value="$admin_mail_html"
 }
 
 #=================================================
@@ -227,6 +230,6 @@ apply_config() {
 #=================================================
 
 case $1 in
-  show) show_config;;
-  apply) apply_config;;
+show) show_config;;
+apply) apply_config;;
 esac
