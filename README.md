@@ -45,7 +45,6 @@ With its cron file
 
 * x86-64b - [![](https://ci-apps.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/)
 * ARMv8-A - [![](https://ci-apps-arm.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/unattended_upgrades/)
-* Buster x86-64b - [![](https://ci-buster.nohost.me/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-buster.nohost.me/ci/apps/unattended_upgrades/)
 
 ## Limitations
 

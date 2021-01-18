@@ -4,6 +4,12 @@ Changelog
 ## Unreleased
 - Nothing for now...
 
+## [1.0~ynh6]() - 2020-01-18
+
+#### Fixed
+* [Linter warnings](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/14)
+
+
 ## [1.0~ynh5](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/pull/13) - 2019-04-24
 
 #### Added

@@ -52,8 +52,8 @@ Avec son cron
 
 ## Liens
 
- * Reporter un bug: https://github.com/YunoHost-Apps/unattended_upgrades_ynh/issues
- * Site de YunoHost: https://yunohost.org/
+ * Reporter un bug : https://github.com/YunoHost-Apps/unattended_upgrades_ynh/issues
+ * Site de YunoHost : https://yunohost.org/
 
 ---
 
