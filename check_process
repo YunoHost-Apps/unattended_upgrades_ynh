@@ -26,7 +26,7 @@
         setup_private=0
         setup_public=0
         upgrade=1
-        upgrade=1	from_commit=5a359c6833a5415932ab427a80dbbdc6ca3c8e23
+        upgrade=1	from_commit=74210eea818d76a35f1f9872029b267300ff5c46
         backup_restore=1
         multi_instance=0
         port_already_use=0
@@ -65,5 +65,5 @@
 Email=
 Notification=change
 ;;; Upgrade options
-    ; commit=b86b9d09ed97bf04b7e1afad72376d8d695b418b
-        name=Mar 14, 2018 Update helpers
+    ; commit=74210eea818d76a35f1f9872029b267300ff5c46
+        name=Apr 23, 2020 Global upgrade
