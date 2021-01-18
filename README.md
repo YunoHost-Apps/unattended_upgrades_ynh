@@ -1,7 +1,7 @@
 # Unattended-upgrades for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://dash.yunohost.org/appci/app/unattended_upgrades) ![](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) [![](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)](https://github.com/YunoHost/Apps/#what-to-do-if-i-cant-maintain-my-app-anymore-)  
-[![Install Unattended-upgrades with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=unattended_upgrades)
+[![Install Unattended-upgrades with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=unattended_upgrades)
 
 *[Lire ce readme en français.](./README_fr.md)*
 
@@ -23,13 +23,13 @@ No demo available.
 ## Configuration
 
 Have a look to the following config files for Unattended-upgrades
- * /etc/apt/apt.conf.d/50unattended-upgrades
- * /etc/apt/apt.conf.d/02periodic
+ * `/etc/apt/apt.conf.d/50unattended-upgrades`
+ * `/etc/apt/apt.conf.d/02periodic`
 
 And this one for Apticron
- * /etc/apticron/apticron.conf
+ * `/etc/apticron/apticron.conf`
 With its cron file
- * /etc/cron.d/apticron
+ * `/etc/cron.d/apticron`
 
 ## Documentation
 
@@ -58,8 +58,7 @@ With its cron file
 
 ---
 
-Developers infos
-----------------
+## Developers infos
 
 Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing).
 

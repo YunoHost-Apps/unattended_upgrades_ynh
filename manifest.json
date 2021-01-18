@@ -6,7 +6,7 @@
         "en": "Daily automatic upgrades",
         "fr": "Mise à jour automatique quotidienne."
     },
-    "version": "1.0~ynh5",
+    "version": "1.0~ynh6",
     "url": "https://wiki.debian.org/UnattendedUpgrades",
     "license": "GPL-2.0-or-later",
     "maintainer": {
@@ -18,7 +18,7 @@
         "email": "maniackc_dev@crudelis.fr"
     }],
     "requirements": {
-        "yunohost": ">= 3.6.0"
+        "yunohost": ">= 3.8.1"
     },
     "multi_instance": false,
     "services": [],
@@ -38,7 +38,7 @@
                 "name": "ynh_update",
                 "type": "boolean",
                 "ask": {
-                    "en": "Would you like to update YunoHost packages automatically ?",
+                    "en": "Would you like to update YunoHost packages automatically?",
                     "fr": "Souhaitez-vous mettre à jour les paquets YunoHost automatiquement ?"
                 },
                 "default": true
@@ -47,7 +47,7 @@
                 "name": "previous_apticron",
                 "type": "boolean",
                 "ask": {
-                    "en": "Would you like to receive an email to inform which upgrades need to be done ?",
+                    "en": "Would you like to receive an email to inform which upgrades need to be done?",
                     "fr": "Souhaitez-vous recevoir un email pour vous informer des mises à jour nécessaires ?"
                 },
                 "default": true
@@ -56,7 +56,7 @@
                 "name": "after_apticron",
                 "type": "boolean",
                 "ask": {
-                    "en": "Would you like to receive an email to verify if there any upgrades left after each auto upgrade ?",
+                    "en": "Would you like to receive an email to verify if there any upgrades left after each auto upgrade?",
                     "fr": "Souhaitez-vous recevoir un email pour vérifier s'il reste des mises à jour après chaque mise à niveau automatique ?"
                 },
                 "default": true
@@ -65,7 +65,7 @@
                 "name": "unattended_mail",
                 "type": "string",
                 "ask": {
-                    "en": "Would you like to receive an email from Unattended-Upgrades ?",
+                    "en": "Would you like to receive an email from Unattended-Upgrades?",
                     "fr": "Souhaitez-vous recevoir un email de Unattended-Upgrades ?"
                 },
                 "choices": ["If an upgrade has been done", "Only if there was an error", "Never"],

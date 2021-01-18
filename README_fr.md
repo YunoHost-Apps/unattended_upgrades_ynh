@@ -1,7 +1,7 @@
 # Unattended-upgrades pour YunoHost
 
 [![Niveau d'intégration](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://dash.yunohost.org/appci/app/unattended_upgrades) ![](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) [![](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)](https://github.com/YunoHost/Apps/#what-to-do-if-i-cant-maintain-my-app-anymore-)  
-[![Installer Unattended-upgrades avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=unattended_upgrades)
+[![Installer Unattended-upgrades avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=unattended_upgrades)
 
 *[Read this readme in english.](./README.md)*
 
@@ -23,13 +23,13 @@ Aucune démo pour cette application.
 ## Configuration
 
 Regardez les fichiers de configuration suivant pour Unattended-upgrades
- * /etc/apt/apt.conf.d/50unattended-upgrades
- * /etc/apt/apt.conf.d/02periodic
+ * `/etc/apt/apt.conf.d/50unattended-upgrades`
+ * `/etc/apt/apt.conf.d/02periodic`
 
 Et celui-ci pour Apticron
- * /etc/apticron/apticron.conf
+ * `/etc/apticron/apticron.conf`
 Avec son cron
- * /etc/cron.d/apticron
+ * `/etc/cron.d/apticron`
 
 ## Documentation
 
@@ -45,7 +45,6 @@ Avec son cron
 
 * x86-64b - [![](https://ci-apps.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/)
 * ARMv8-A - [![](https://ci-apps-arm.yunohost.org/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/unattended_upgrades/)
-* Buster x86-64b - [![](https://ci-buster.nohost.me/ci/logs/unattended_upgrades%20%28Apps%29.svg)](https://ci-buster.nohost.me/ci/apps/unattended_upgrades/)
 
 ## Limitations
 
@@ -58,8 +57,7 @@ Avec son cron
 
 ---
 
-Informations à l'intention des développeurs
-----------------
+## Informations à l'intention des développeurs
 
 Merci de faire vos pull request sur la [branche testing](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing).
 
