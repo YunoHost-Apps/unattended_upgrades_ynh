@@ -10,7 +10,7 @@
     "url": "https://wiki.debian.org/UnattendedUpgrades",
     "license": "GPL-2.0-or-later",
     "maintainer": {
-        "name": "None...",
+        "name": "",
         "email": ""
     },
     "previous_maintainers": [{
