@@ -10,9 +10,13 @@
     "url": "https://wiki.debian.org/UnattendedUpgrades",
     "license": "GPL-2.0-or-later",
     "maintainer": {
+        "name": "None...",
+        "email": ""
+    },
+    "previous_maintainers": [{
         "name": "Maniack Crudelis",
         "email": "maniackc_dev@crudelis.fr"
-    },
+    }],
     "requirements": {
         "yunohost": ">= 3.6.0"
     },
