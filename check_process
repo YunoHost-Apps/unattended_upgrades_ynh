@@ -26,12 +26,12 @@
         setup_private=0
         setup_public=0
         upgrade=1
-        upgrade=1	from_commit=4e342d41ea448c4a9de2bbbc6b6cffe92320ef71
+        upgrade=1   from_commit=5a359c6833a5415932ab427a80dbbdc6ca3c8e23
         backup_restore=1
         multi_instance=0
         port_already_use=0
         change_url=0
-        actions=0
+        actions=1
         config_panel=1
 ;; Test complet 2/3
     ; Manifest
@@ -61,9 +61,11 @@
         setup_nourl=1
         upgrade=1
         backup_restore=1
+;;; Levels
+    Level 5=auto
 ;;; Options
 Email=
 Notification=change
 ;;; Upgrade options
-    ; commit=4e342d41ea448c4a9de2bbbc6b6cffe92320ef71
-        name=Merge pull request #16 from YunoHost-Apps/testing 
+    ; commit=b86b9d09ed97bf04b7e1afad72376d8d695b418b
+        name=Mar 14, 2018 Update helpers
