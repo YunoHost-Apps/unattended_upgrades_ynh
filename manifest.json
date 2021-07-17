@@ -8,6 +8,12 @@
     },
     "version": "1.0~ynh5",
     "url": "https://wiki.debian.org/UnattendedUpgrades",
+    "upstream": {
+        "license": "GPL-2.0-or-later",
+        "website": "https://wiki.debian.org/UnattendedUpgrades",
+        "admindoc": "https://wiki.debian.org/UnattendedUpgrades",
+        "userdoc": "https://manpages.debian.org/stretch/apticron/apticron.1.en.html"
+    },
     "license": "GPL-2.0-or-later",
     "maintainer": {
         "name": "",
