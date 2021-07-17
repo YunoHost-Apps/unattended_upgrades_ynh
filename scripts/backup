@@ -19,16 +19,18 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..."
+ynh_print_info --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
-# SPECIFIC BACKUP
+# DECLARE DATA AND CONF FILES TO BACKUP
+#=================================================
+ynh_print_info --message="Declaring files to be backed up..."
+
 #=================================================
 # BACKUP UNATTENDED-UPGRADES CONFIG
 #=================================================
-ynh_script_progression --message="Backing up unattended-upgrades config..."
 
 ynh_backup --src_path="/etc/apt/apt.conf.d/50unattended-upgrades"
 # Backup also the backup of the config file
@@ -37,21 +39,18 @@ ynh_backup --src_path="/etc/apt/50unattended-upgrades.backup"
 #=================================================
 # BACKUP APT PERIODIC
 #=================================================
-ynh_script_progression --message="Backing up APT periodic..."
 
 ynh_backup --src_path="/etc/apt/apt.conf.d/02periodic"
 
 #=================================================
 # BACKUP APTICRON CONFIG
 #=================================================
-ynh_script_progression --message="Backing up Apticron config..."
 
 ynh_backup --src_path="/etc/apticron/apticron.conf"
 
 #=================================================
 # BACKUP THE CRON FILE
 #=================================================
-ynh_script_progression --message="Backing up cron file..."
 
 ynh_backup --src_path="/etc/cron.d/apticron"
 
@@ -59,4 +58,4 @@ ynh_backup --src_path="/etc/cron.d/apticron"
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)." --last
+ynh_print_info --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
