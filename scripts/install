@@ -6,9 +6,6 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-# Load common variables for all scripts.
-source _variables
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -54,7 +51,7 @@ ynh_app_setting_set --app=$app --key=admin_mail_html --value=1
 #=================================================
 ynh_script_progression --message="Installing dependencies..." --weight=10
 
-ynh_install_app_dependencies $app_depencencies
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # SPECIFIC SETUP
@@ -132,11 +129,7 @@ fi
 #=================================================
 ynh_script_progression --message="Configure APT Periodic for Unattended" --weight=2
 
-cp "../conf/02periodic" "/etc/apt/apt.conf.d/02periodic"
-ynh_replace_string --match_string="__VERBOSITY__" --replace_string="$unattended_verbosity" --target_file="/etc/apt/apt.conf.d/02periodic"
-# This config file is used by /etc/cron.daily/apt
-
-ynh_store_file_checksum "/etc/apt/apt.conf.d/02periodic"
+ynh_add_config --template="../conf/02periodic" --destination="/etc/apt/apt.conf.d/02periodic"
 
 #=================================================
 # MODIFY ORIGINAL APTICRON CRON FILE
