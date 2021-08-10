@@ -103,10 +103,7 @@ fi
 if [ "$file" = "02periodic" ]
 then
     # Get the default file and overwrite the current config
-    cp /etc/yunohost/apps/$app/conf/02periodic "$config_file"
-
-    # Recreate the default config
-    ynh_replace_string --match_string="__VERBOSITY__" --replace_string="$unattended_verbosity" --target_file="/etc/apt/apt.conf.d/02periodic"
+    ynh_add_config --template="../conf/02periodic" --destination="/etc/apt/apt.conf.d/02periodic"
 fi
 
 # Calculate and store the config file checksum into the app settings
