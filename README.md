@@ -17,7 +17,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 Daily automatic upgrades
 
-**Shipped version:** 1.0~ynh5
+**Shipped version:** 1.0~ynh6
 
 
 

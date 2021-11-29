@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Mise à jour automatique quotidienne
 
-**Version incluse :** 1.0~ynh5
+**Version incluse :** 1.0~ynh6
 
 
 
