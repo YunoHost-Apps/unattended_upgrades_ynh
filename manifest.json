@@ -6,7 +6,7 @@
         "en": "Daily automatic upgrades",
         "fr": "Mise à jour automatique quotidienne"
     },
-    "version": "1.0~ynh5",
+    "version": "1.0~ynh6",
     "url": "https://wiki.debian.org/UnattendedUpgrades",
     "upstream": {
         "license": "GPL-2.0-or-later",
