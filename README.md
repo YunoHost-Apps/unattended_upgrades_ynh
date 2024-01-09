@@ -19,19 +19,6 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Daily automatic upgrades
 
 **Shipped version:** 1.0~ynh6
-## Disclaimers / important information
-
-## Configuration
-
-Have a look to the following config files for Unattended-upgrades
- * /etc/apt/apt.conf.d/50unattended-upgrades
- * /etc/apt/apt.conf.d/02periodic
-
-And this one for Apticron
- * /etc/apticron/apticron.conf
-With its cron file
- * /etc/cron.d/apticron
-
 ## Documentation and resources
 
 * Official app website: <https://wiki.debian.org/UnattendedUpgrades>
