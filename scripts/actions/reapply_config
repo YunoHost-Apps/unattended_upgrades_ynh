@@ -1,0 +1,61 @@
+#!/bin/bash
+
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+# Load common variables for all scripts.
+source scripts/_common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# SPECIFIC ACTION
+#=================================================
+# RESET APTICRON CONFIGURATION
+#=================================================
+
+if [[ "$*" =~ ^apticron$ ]]; then
+    ynh_script_progression --message="Resetting Apticron..."
+
+    ynh_backup_if_checksum_is_different --file="$apticron_config"
+    ynh_backup_if_checksum_is_different --file="$apticron_cron"
+
+    _apticron_restore_config
+    _apticron_set_config
+
+    ynh_store_file_checksum --file="$apticron_config"
+    ynh_store_file_checksum --file="$apticron_cron"
+fi
+
+#=================================================
+# RESET UNATTENDED-UPGRADES CONFIGURATION
+#=================================================
+
+if [[ "$*" =~ ^50unattended-upgrades$ ]]; then
+    ynh_script_progression --message="Resetting unattended-upgrades..."
+
+    ynh_backup_if_checksum_is_different --file="$unattended_upgrades_config"
+    _unattended_upgrades_restore_config
+    _unattended_upgrades_set_config
+    ynh_store_file_checksum --file="$unattended_upgrades_config"
+fi
+
+#=================================================
+# RESET APT PERIODIC CONFIGURATION
+#=================================================
+
+if [[ "$*" =~ ^02periodic$ ]]; then
+    ynh_script_progression --message="Resetting apt periodic..."
+
+    ynh_backup_if_checksum_is_different --file="$_02periodic_config"
+    _02periodic_set_config
+    ynh_store_file_checksum --file="$_02periodic_config"
+fi
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Execution completed" --last
