@@ -16,7 +16,7 @@ ynh_script_progression --message="Removing system configurations related to $app
 
 _apticron_restore_config
 _unattended_upgrades_restore_config
-ynh_secure_remove "/etc/apt/apt.conf.d/02periodic"
+_02periodic_remove
 
 #=================================================
 # END OF SCRIPT

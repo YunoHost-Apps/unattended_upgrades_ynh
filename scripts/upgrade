@@ -64,7 +64,7 @@ _unattended_upgrades_set_config
 if [ "$overwrite_periodic" -eq 1 ]; then
     ynh_script_progression --message="Upgrading APT Periodic for Unattended..."
 
-    ynh_add_config --template="../conf/02periodic" --destination="/etc/apt/apt.conf.d/02periodic"
+    _02periodic_set_config
 fi
 
 #=================================================

@@ -103,6 +103,17 @@ _unattended_upgrades_restore_config() {
     mv "$unattended_upgrades_config_backup" "$unattended_upgrades_config"
 }
 
+
+_02periodic_config="/etc/apt/apt.conf.d/02periodic"
+
+_02periodic_set_config() {
+    ynh_add_config --template="../conf/02periodic" --destination="$_02periodic_config"
+}
+
+_02periodic_remove() {
+    ynh_secure_remove "$_02periodic_config"
+}
+
 #=================================================
 # BACKUP
 #=================================================

@@ -39,7 +39,7 @@ _unattended_upgrades_set_config
 #=================================================
 ynh_script_progression --message="Configure APT Periodic for Unattended" --weight=2
 
-ynh_add_config --template="../conf/02periodic" --destination="/etc/apt/apt.conf.d/02periodic"
+_02periodic_set_config
 
 #=================================================
 # END OF SCRIPT
