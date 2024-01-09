@@ -41,7 +41,6 @@ ynh_script_progression --message="Configure APT Periodic for Unattended" --weigh
 
 ynh_add_config --template="../conf/02periodic" --destination="/etc/apt/apt.conf.d/02periodic"
 
-
 #=================================================
 # END OF SCRIPT
 #=================================================

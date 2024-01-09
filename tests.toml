@@ -10,7 +10,11 @@ test_format = 1.0
     args.unattended_mail = "on_upgrade"
     args.unattended_verbosity = "v1"
 
-    test_upgrade_from.4e342d41.name = "Merge pull request #16 from YunoHost-Apps/testing"
+    [default.test_upgrade_from.4e342d41]
+    name = "Merge pull request #16 from YunoHost-Apps/testing"
+    args.upgrade_level = "Security only"
+    args.unattended_mail = "On upgrade"
+    args.unattended_verbosity = "1"
 
 [suite_2]
     args.upgrade_level = "security_and_updates"

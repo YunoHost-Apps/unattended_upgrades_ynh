@@ -10,20 +10,13 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# SPECIFIC REMOVE
+# REMOVE SYSTEM CONFIGURATIONS
 #=================================================
-# REMOVE THE APT PERIODIC FILE
-#=================================================
-ynh_script_progression --message="Removing the APT Periodic file..."
+ynh_script_progression --message="Removing system configurations related to $app..." --weight=1
 
+_apticron_restore_config
+_unattended_upgrades_restore_config
 ynh_secure_remove "/etc/apt/apt.conf.d/02periodic"
-
-#=================================================
-# DECONFIGURE UNATTENDED-UPGRADES
-#=================================================
-ynh_script_progression --message="Deconfiguring unattended-upgrades..."
-
-mv "/etc/apt/50unattended-upgrades.backup" "/etc/apt/apt.conf.d/50unattended-upgrades"
 
 #=================================================
 # END OF SCRIPT

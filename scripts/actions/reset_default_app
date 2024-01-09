@@ -11,26 +11,6 @@ source scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
-
-#=================================================
-# RETRIEVE ARGUMENTS
-#=================================================
-
-app=$YNH_APP_INSTANCE_NAME
-
-unattended_verbosity=$(ynh_app_setting_get --app=$app --key=unattended_verbosity)
-upgrade_level="$(ynh_app_setting_get --app=$app --key=upgrade_level)"
-ynh_update=$(ynh_app_setting_get --app=$app --key=ynh_update)
-unattended_mail="$(ynh_app_setting_get --app=$app --key=unattended_mail)"
-previous_apticron=$(ynh_app_setting_get --app=$app --key=previous_apticron)
-after_apticron=$(ynh_app_setting_get --app=$app --key=after_apticron)
-
-#=================================================
 # SPECIFIC ACTION
 #=================================================
 # RESET APTICRON CONFIGURATION

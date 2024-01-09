@@ -9,7 +9,10 @@
 #=================================================
 
 apticron_config="/etc/apticron/apticron.conf"
+apticron_config_backup="/etc/yunohost/apps/$app/conf/apticron.conf.backup"
+
 apticron_cron="/etc/cron.d/apticron"
+apticron_cron_backup="/etc/yunohost/apps/$app/conf/apticron.crond.backup"
 
 _apticron_set_config() {
     # If the config file doesn't exist, copy the model
@@ -18,7 +21,7 @@ _apticron_set_config() {
     fi
 
     # Create a backup of the config file for the reset action
-    cp "$apticron_config" "/etc/yunohost/apps/$app/conf/apticron.conf.backup"
+    cp "$apticron_config" "$apticron_config_backup"
 
     ynh_replace_string --match_string="# CUSTOM_SUBJECT=.*" \
         --replace_string="&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'" --target_file="$apticron_config"
@@ -26,7 +29,7 @@ _apticron_set_config() {
         --replace_string="&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\\\o/\'" --target_file="$apticron_config"
 
     # Create a backup of the cron file for the reset action
-    cp "$apticron_cron" "/etc/yunohost/apps/$app/conf/apticron.crond.backup"
+    cp "$apticron_cron" "$apticron_cron_backup"
 
     # Copy and comment the current cron
     ynh_replace_string --match_string="^.* root if.*" --replace_string="#&\n&" --target_file="$apticron_cron"
@@ -47,16 +50,17 @@ _apticron_set_config() {
 }
 
 _apticron_restore_config() {
-    mv "/etc/yunohost/apps/$app/conf/apticron.conf.backup" "$apticron_config"
-    mv "/etc/yunohost/apps/$app/conf/apticron.crond.backup" "$apticron_cron"
+    mv "$apticron_config_backup" "$apticron_config"
+    mv "$apticron_cron_backup" "$apticron_cron"
 }
 
 
 unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
+unattended_upgrades_config_backup="/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup"
 
 _unattended_upgrades_set_config() {
     # Make a backup of 50unattended-upgrades
-    cp "$unattended_upgrades_config" "/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup"
+    cp "$unattended_upgrades_config" "$unattended_upgrades_config_backup"
 
     # Configure upgrade sources
     # Allow other updates
@@ -89,15 +93,14 @@ _unattended_upgrades_set_config() {
         # Send mail only if there's an error
         ynh_replace_string --match_string="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"true\";" --target_file="$unattended_upgrades_config"
 
-    else	# "Never"
+    else # "Never"
         # Comment "Unattended-Upgrade::Mail" if it isn't already commented
         ynh_replace_string --match_string="^\(Unattended-Upgrade::Mail \)" --replace_string="//\1" --target_file="$unattended_upgrades_config"
     fi
-
 }
 
 _unattended_upgrades_restore_config() {
-    mv "/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup" "$unattended_upgrades_config"
+    mv "$unattended_upgrades_config_backup" "$unattended_upgrades_config"
 }
 
 #=================================================

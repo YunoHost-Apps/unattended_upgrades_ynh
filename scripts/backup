@@ -10,20 +10,6 @@ source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-# Exit if an error occurs during the execution of the script
-#REMOVEME? ynh_abort_if_errors
-
-#=================================================
-# LOAD SETTINGS
-#=================================================
-#REMOVEME? ynh_print_info --message="Loading installation settings..."
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#=================================================
 # DECLARE DATA AND CONF FILES TO BACKUP
 #=================================================
 ynh_print_info --message="Declaring files to be backed up..."
@@ -32,27 +18,16 @@ ynh_print_info --message="Declaring files to be backed up..."
 # BACKUP UNATTENDED-UPGRADES CONFIG
 #=================================================
 
-ynh_backup --src_path="/etc/apt/apt.conf.d/50unattended-upgrades"
-# Backup also the backup of the config file
-ynh_backup --src_path="/etc/apt/50unattended-upgrades.backup"
+ynh_backup --src_path="$apticron_config"
+ynh_backup --src_path="$apticron_config_backup"
 
-#=================================================
-# BACKUP APT PERIODIC
-#=================================================
+ynh_backup --src_path="$apticron_cron"
+ynh_backup --src_path="$apticron_cron_backup"
+
+ynh_backup --src_path="$unattended_upgrades_config"
+ynh_backup --src_path="$unattended_upgrades_config_backup"
 
 ynh_backup --src_path="/etc/apt/apt.conf.d/02periodic"
-
-#=================================================
-# BACKUP APTICRON CONFIG
-#=================================================
-
-ynh_backup --src_path="/etc/apticron/apticron.conf"
-
-#=================================================
-# BACKUP THE CRON FILE
-#=================================================
-
-ynh_backup --src_path="/etc/cron.d/apticron"
 
 #=================================================
 # END OF SCRIPT

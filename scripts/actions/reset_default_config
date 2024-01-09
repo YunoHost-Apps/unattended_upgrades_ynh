@@ -93,7 +93,7 @@ then
         # Send mail only if there's an error
         ynh_replace_string --match_string="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"true\";" --target_file="$config_file"
 
-    else	# "Never"
+    else # "Never"
         # Comment "Unattended-Upgrade::Mail" if it isn't already commented
         ynh_replace_string --match_string="^\(Unattended-Upgrade::Mail \)" --replace_string="//\1" --target_file="$config_file"
     fi
