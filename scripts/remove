@@ -10,22 +10,6 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading installation settings..."
-
-app=$YNH_APP_INSTANCE_NAME
-
-#=================================================
-# STANDARD REMOVE
-#=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Removing dependencies..." --weight=5
-
-ynh_remove_app_dependencies
-
-#=================================================
 # SPECIFIC REMOVE
 #=================================================
 # REMOVE THE APT PERIODIC FILE

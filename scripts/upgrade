@@ -9,20 +9,6 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-#=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading installation settings..."
-
-app=$YNH_APP_INSTANCE_NAME
-
-unattended_verbosity=$(ynh_app_setting_get --app=$app --key=unattended_verbosity)
-overwrite_periodic=$(ynh_app_setting_get --app=$app --key=overwrite_periodic)
-
-#=================================================
-# CHECK VERSION
-#=================================================
-
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
@@ -39,7 +25,7 @@ fi
 # If admin_mail_html doesn't exist, create it
 if [ -z "$admin_mail_html" ]; then
     admin_mail_html=1
-    ynh_app_setting_set --app=$app --key=admin_mail_html --value=$admin_mail_html
+#REMOVEME?     ynh_app_setting_set --app=$app --key=admin_mail_html --value=$admin_mail_html
 fi
 
 # Make a non perfect backup for apticron.conf if non existent
@@ -61,25 +47,25 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=3
+#REMOVEME? ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=3
 
 # Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
+#REMOVEME? ynh_backup_before_upgrade
+#REMOVEME? ynh_clean_setup () {
     # restore it if the upgrade fails
-    ynh_restore_upgradebackup
+#REMOVEME?     ynh_restore_upgradebackup
 }
 # Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+#REMOVEME? ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Upgrading dependencies..." --weight=5
+#REMOVEME? ynh_script_progression --message="Upgrading dependencies..." --weight=5
 
-ynh_install_app_dependencies $pkg_dependencies
+#REMOVEME? ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -103,7 +89,7 @@ ynh_install_app_dependencies $pkg_dependencies
 if [ $overwrite_periodic -eq 1 ]
 then
     ynh_script_progression --message="Upgrading APT Periodic for Unattended..." --weight=3
-    
+
     ynh_add_config --template="../conf/02periodic" --destination="/etc/apt/apt.conf.d/02periodic"
 fi
 
@@ -130,7 +116,7 @@ else
 fi
 ynh_app_changelog --format=$format
 
-echo "To modify any option of unattended-upgrades, please have a look to /etc/apt/apt.conf.d/50unattended-upgrades and 
+echo "To modify any option of unattended-upgrades, please have a look to /etc/apt/apt.conf.d/50unattended-upgrades and
 /etc/apt/apt.conf.d/02periodic
 Unattended-upgrades will be executed every day at midnight.
 
