@@ -16,7 +16,11 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-Daily automatic upgrades
+This package installs `unattended-upgrades` and `apticron` to:
+
+* automatically install security updates (or all updates if selected)
+* send automatic messages about available and done updates
+
 
 **Shipped version:** 1.0~ynh6
 ## Documentation and resources
