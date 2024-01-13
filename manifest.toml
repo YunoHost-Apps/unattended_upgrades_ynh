@@ -7,7 +7,7 @@ name = "Unattended-upgrades"
 description.en = "Daily automatic upgrades"
 description.fr = "Mise à jour automatique quotidienne"
 
-version = "1.0~ynh6"
+version = "1.0~ynh7"
 
 maintainers = []
 
