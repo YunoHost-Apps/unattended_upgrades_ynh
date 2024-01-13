@@ -31,7 +31,7 @@ ram.runtime = "50M"
     [install.upgrade_level]
     ask.en = "Choose the sources of packages to automatically upgrade"
     ask.fr = "Choisissez les sources des paquets à mettre à jour automatiquement"
-    type = "string"
+    type = "select"
     choices.security_only = "Security only"
     choices.security_and_updates = "Security and updates"
     default = "security_only"
