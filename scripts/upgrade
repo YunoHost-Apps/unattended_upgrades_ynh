@@ -9,20 +9,6 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-#=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading installation settings..."
-
-app=$YNH_APP_INSTANCE_NAME
-
-unattended_verbosity=$(ynh_app_setting_get --app=$app --key=unattended_verbosity)
-overwrite_periodic=$(ynh_app_setting_get --app=$app --key=overwrite_periodic)
-
-#=================================================
-# CHECK VERSION
-#=================================================
-
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
@@ -31,123 +17,55 @@ upgrade_type=$(ynh_check_app_version_changed)
 ynh_script_progression --message="Ensuring downward compatibility..."
 
 # If overwrite_periodic doesn't exist, create it
-if [ -z "$overwrite_periodic" ]; then
+if [ -z "${overwrite_periodic:-}" ]; then
     overwrite_periodic=1
     ynh_app_setting_set --app=$app --key=overwrite_periodic --value=$overwrite_periodic
 fi
 
-# If admin_mail_html doesn't exist, create it
-if [ -z "$admin_mail_html" ]; then
-    admin_mail_html=1
-    ynh_app_setting_set --app=$app --key=admin_mail_html --value=$admin_mail_html
-fi
-
 # Make a non perfect backup for apticron.conf if non existent
-if [ ! -e "../conf/apticron.conf.backup" ]; then
+if [ ! -e "$apticron_config_backup" ]; then
     # Create a backup of the config file for the reset action
-    cp "/etc/apticron/apticron.conf" "../conf/apticron.conf.backup"
-    sed --in-place '/^CUSTOM_SUBJECT=/d' "../conf/apticron.conf.backup"
-    sed --in-place '/^CUSTOM_NO_UPDATES_SUBJECT=/d' "../conf/apticron.conf.backup"
+    cp "$apticron_config" "$apticron_config_backup"
+    sed --in-place '/^CUSTOM_SUBJECT=/d' "$apticron_config_backup"
+    sed --in-place '/^CUSTOM_NO_UPDATES_SUBJECT=/d' "$apticron_config_backup"
 fi
 
 # Make a non perfect backup for apticron cron file if non existent
-if [ ! -e "../conf/apticron.crond.backup" ]; then
+if [ ! -e "$apticron_cron" ]; then
     # Create a backup of the config file for the reset action
-    cp "/etc/cron.d/apticron" "../conf/apticron.crond.backup"
-    sed --in-place '/^[[:digit:]]/d' "../conf/apticron.crond.backup"
-    ynh_replace_string --match_string="^#\([[:digit:]].*\)" --replace_string="\1" --target_file="../conf/apticron.crond.backup"
+    cp "$apticron_cron" "$apticron_cron"
+    sed --in-place '/^[[:digit:]]/d' "$apticron_cron"
+    ynh_replace_string --match_string="^#\([[:digit:]].*\)" --replace_string="\1" --target_file="$apticron_cron"
+fi
+
+# Make a non perfect backup for apticron cron file if non existent
+if [ ! -e "$unattended_upgrades_config" ]; then
+    cp "$unattended_upgrades_config" "$unattended_upgrades_config_backup"
 fi
 
 #=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+# CONFIGURE APTICRON
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=3
+ynh_script_progression --message="Configuring Apticron..."
 
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-    # restore it if the upgrade fails
-    ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+_apticron_set_config
 
 #=================================================
-# STANDARD UPGRADE STEPS
+# CONFIGURE UNATTENDED-UPGRADES
 #=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Upgrading dependencies..." --weight=5
+ynh_script_progression --message="Configuring Unattended-Upgrades..."
 
-ynh_install_app_dependencies $pkg_dependencies
+_unattended_upgrades_set_config
 
 #=================================================
-# SPECIFIC UPGRADE
+# CONFIGURE APT PERIODIC FOR UNATTENDED
 #=================================================
-# UPGRADE APTICRON
-#=================================================
-
-# Nothing to do here...
-
-#=================================================
-# UPGRADE UNATTENDED-UPGRADES
-#=================================================
-
-# Nothing to do here...
-
-#=================================================
-# UPGRADE APT PERIODIC FOR UNATTENDED
-#=================================================
-
 # Overwrite 02periodic config file only if it's allowed
-if [ $overwrite_periodic -eq 1 ]
-then
-    ynh_script_progression --message="Upgrading APT Periodic for Unattended..." --weight=3
-    
-    ynh_add_config --template="../conf/02periodic" --destination="/etc/apt/apt.conf.d/02periodic"
+if [ "$overwrite_periodic" -eq 1 ]; then
+    ynh_script_progression --message="Upgrading APT Periodic for Unattended..."
+
+    _02periodic_set_config
 fi
-
-#=================================================
-# UPGRADE APTICRON CRON FILE
-#=================================================
-
-# Nothing to do here...
-
-#=================================================
-# GENERIC FINALISATION
-#=================================================
-# SEND A README FOR THE ADMIN
-#=================================================
-
-# Get main domain and buid the url of the admin panel of the app.
-admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
-
-# If a html email is required. Apply html to the changelog.
-if [ "$admin_mail_html" -eq 1 ]; then
-    format=html
-else
-    format=plain
-fi
-ynh_app_changelog --format=$format
-
-echo "To modify any option of unattended-upgrades, please have a look to /etc/apt/apt.conf.d/50unattended-upgrades and 
-/etc/apt/apt.conf.d/02periodic
-Unattended-upgrades will be executed every day at midnight.
-
-To modify the configuration of apticron, please have a look to /etc/apticron/apticron.conf.
-Apticron will be executed, depending of the requested configuration at 8 p.m. and 2 a.m. If you want to change this schedule, please have a look to the cron file /etc/cron.d/apticron.
-
-You can configure this app easily by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__.
-You can also find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__.
-
-If you're facing an issue or want to improve this app, please open a new issue in this __URL_TAG1__project__URL_TAG2__https://github.com/YunoHost-Apps/unattended_upgrades_ynh__URL_TAG3__.
-
----
-
-Changelog since your last upgrade:
-$(cat changelog)" > mail_to_send
-
-ynh_send_readme_to_admin --app_message="mail_to_send" --recipients=root --type=upgrade
 
 #=================================================
 # END OF SCRIPT

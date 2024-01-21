@@ -10,177 +10,36 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# MANAGE FAILURE OF THE SCRIPT
+# STORE VARIABLES FOR POST_INSTALL.md
 #=================================================
 
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+# Get main domain and buid the url of the admin panel of the app.
+admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
+ynh_app_setting_set --app="$app" --key=admin_panel --value="$admin_panel"
 
-#=================================================
-# RETRIEVE ARGUMENTS FROM THE MANIFEST
-#=================================================
+# ynh_app_setting_set --app=$app --key=overwrite_periodic --value=1
+# ynh_app_setting_set --app=$app --key=admin_mail_html --value=1
 
-upgrade_level="$YNH_APP_ARG_UPGRADE_LEVEL"
-ynh_update=$YNH_APP_ARG_YNH_UPDATE
-previous_apticron=$YNH_APP_ARG_PREVIOUS_APTICRON
-after_apticron=$YNH_APP_ARG_AFTER_APTICRON
-unattended_mail="$YNH_APP_ARG_UNATTENDED_MAIL"
-unattended_verbosity=$YNH_APP_ARG_UNATTENDED_VERBOSITY
-
-app=$YNH_APP_INSTANCE_NAME
-
-#=================================================
-# STORE SETTINGS FROM MANIFEST
-#=================================================
-ynh_script_progression --message="Storing installation settings..." --weight=3
-
-ynh_app_setting_set --app=$app --key=upgrade_level --value="$upgrade_level"
-ynh_app_setting_set --app=$app --key=ynh_update --value=$ynh_update
-ynh_app_setting_set --app=$app --key=previous_apticron --value=$previous_apticron
-ynh_app_setting_set --app=$app --key=after_apticron --value=$after_apticron
-ynh_app_setting_set --app=$app --key=unattended_mail --value="$unattended_mail"
-ynh_app_setting_set --app=$app --key=unattended_verbosity --value=$unattended_verbosity
-
-ynh_app_setting_set --app=$app --key=overwrite_periodic --value=1
-ynh_app_setting_set --app=$app --key=admin_mail_html --value=1
-
-#=================================================
-# STANDARD MODIFICATIONS
-#=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Installing dependencies..." --weight=10
-
-ynh_install_app_dependencies $pkg_dependencies
-
-#=================================================
-# SPECIFIC SETUP
 #=================================================
 # CONFIGURE APTICRON
 #=================================================
 ynh_script_progression --message="Configuring Apticron..."
 
-apticron_config="/etc/apticron/apticron.conf"
-# If the config file doesn't exist, copy the model
-if [ ! -e "$apticron_config" ]
-then
-    cp "/usr/lib/apticron/apticron.conf" "$apticron_config"
-fi
-# Create a backup of the config file for the reset action
-cp "$apticron_config" "/etc/yunohost/apps/$app/conf/apticron.conf.backup"
-
-ynh_replace_string --match_string="# CUSTOM_SUBJECT=.*" \
-    --replace_string="&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'" --target_file="$apticron_config"
-ynh_replace_string --match_string="# CUSTOM_NO_UPDATES_SUBJECT=.*" \
-    --replace_string="&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\\\o/\'" --target_file="$apticron_config"
+_apticron_set_config
 
 #=================================================
 # CONFIGURE UNATTENDED-UPGRADES
 #=================================================
 ynh_script_progression --message="Configuring Unattended-Upgrades..."
 
-unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
-
-# Make a backup of 50unattended-upgrades
-cp "$unattended_upgrades_config" "/etc/apt/50unattended-upgrades.backup"
-
-# Configure upgrade sources
-# Allow other updates
-if [ "$upgrade_level" = "Security and updates" ]
-then
-    ynh_replace_string --match_string="//\(.*\"o=Debian,a=stable\)" --replace_string="\1" --target_file="$unattended_upgrades_config"
-    ynh_replace_string --match_string="//\(.*\"o=Debian,a=stable-updates\)" --replace_string="\1" --target_file="$unattended_upgrades_config"
-fi
-
-# Add YunoHost upgrade source
-if [ $ynh_update -eq 1 ]
-then
-    ynh_replace_string --match_string="origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
-        --replace_string="&\n\n        //YunoHost upgrade\n        \"o=YunoHost,a=stable\";" --target_file="$unattended_upgrades_config"
-fi
-
-# Allow MinimalSteps upgrading to reduce risk in case of reboot
-ynh_replace_string --match_string="//\(Unattended-Upgrade::MinimalSteps\).*" --replace_string="\1 \"true\";" --target_file="$unattended_upgrades_config"
-
-# Configure Unattended Upgrades mailing
-if [ "$unattended_mail" = "If an upgrade has been done" ]
-then
-    # Allow mail to root
-    ynh_replace_string --match_string="//\(Unattended-Upgrade::Mail \)" --replace_string="\1" --target_file="$unattended_upgrades_config"
-
-    # Send mail even if there's no errors
-    ynh_replace_string --match_string="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"false\";" --target_file="$unattended_upgrades_config"
-
-elif [ "$unattended_mail" = "Only if there was an error" ]
-then
-    # Allow mail to root
-    ynh_replace_string --match_string="//\(Unattended-Upgrade::Mail \)" --replace_string="\1" --target_file="$unattended_upgrades_config"
-
-    # Send mail only if there's an error
-    ynh_replace_string --match_string="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"true\";" --target_file="$unattended_upgrades_config"
-
-else	# "Never"
-    # Comment "Unattended-Upgrade::Mail" if it isn't already commented
-    ynh_replace_string --match_string="^\(Unattended-Upgrade::Mail \)" --replace_string="//\1" --target_file="$unattended_upgrades_config"
-fi
+_unattended_upgrades_set_config
 
 #=================================================
 # CONFIGURE APT PERIODIC FOR UNATTENDED
 #=================================================
 ynh_script_progression --message="Configure APT Periodic for Unattended" --weight=2
 
-ynh_add_config --template="../conf/02periodic" --destination="/etc/apt/apt.conf.d/02periodic"
-
-#=================================================
-# MODIFY ORIGINAL APTICRON CRON FILE
-#=================================================
-ynh_script_progression --message="Modify original Apticron cron file" --weight=3
-
-apticron_cron="/etc/cron.d/apticron"
-# Create a backup of the cron file for the reset action
-cp "$apticron_cron" "/etc/yunohost/apps/$app/conf/apticron.crond.backup"
-
-# Copy and comment the current cron
-ynh_replace_string --match_string="^.* root if.*" --replace_string="#&\n&" --target_file="$apticron_cron"
-# Modify the time to set at 20:00 every day
-ynh_replace_string --match_string="^[[:digit:]].*\( root if.*\)" --replace_string="0 20 * * *\1" --target_file="$apticron_cron"
-# Copy the new cron and set the time to 2:00 every night
-ynh_replace_string --match_string="^0 20\(.*\)" --replace_string="&\n0 2\1" --target_file="$apticron_cron"
-
-if [ $previous_apticron -eq 0 ]
-then
-    # Comment the first cron
-    ynh_replace_string --match_string="^0 20 .*" --replace_string="#&" --target_file="$apticron_cron"
-fi
-
-if [ $after_apticron -eq 0 ]
-then
-    # Comment the second cron
-    ynh_replace_string --match_string="^0 2 .*" --replace_string="#&" --target_file="$apticron_cron"
-fi
-
-#=================================================
-# GENERIC FINALISATION
-#=================================================
-# SEND A README FOR THE ADMIN
-#=================================================
-
-# Get main domain and buid the url of the admin panel of the app.
-admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
-
-echo "To modify any option of unattended-upgrades, please have a look to $unattended_upgrades_config and 
-/etc/apt/apt.conf.d/02periodic
-Unattended-upgrades will be executed every day at midnight.
-
-To modify the configuration of apticron, please have a look to $apticron_config.
-Apticron will be executed, depending of the requested configuration at 8 p.m. and 2 a.m. If you want to change this schedule, please have a look to the cron file $apticron_cron.
-
-You can configure this app easily by using the experimental __URL_TAG1__config-panel feature__URL_TAG2__$admin_panel/config-panel__URL_TAG3__.
-You can also find some specific actions for this app by using the experimental __URL_TAG1__action feature__URL_TAG2__$admin_panel/actions__URL_TAG3__.
-
-If you're facing an issue or want to improve this app, please open a new issue in this __URL_TAG1__project__URL_TAG2__https://github.com/YunoHost-Apps/unattended_upgrades_ynh__URL_TAG3__." > mail_to_send
-
-ynh_send_readme_to_admin --app_message="mail_to_send" --recipients=root --type=install
+_02periodic_set_config
 
 #=================================================
 # END OF SCRIPT
