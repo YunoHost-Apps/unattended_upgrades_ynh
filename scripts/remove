@@ -10,36 +10,13 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
+# REMOVE SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Loading installation settings..."
+ynh_script_progression --message="Removing system configurations related to $app..." --weight=1
 
-app=$YNH_APP_INSTANCE_NAME
-
-#=================================================
-# STANDARD REMOVE
-#=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Removing dependencies..." --weight=5
-
-ynh_remove_app_dependencies
-
-#=================================================
-# SPECIFIC REMOVE
-#=================================================
-# REMOVE THE APT PERIODIC FILE
-#=================================================
-ynh_script_progression --message="Removing the APT Periodic file..."
-
-ynh_secure_remove "/etc/apt/apt.conf.d/02periodic"
-
-#=================================================
-# DECONFIGURE UNATTENDED-UPGRADES
-#=================================================
-ynh_script_progression --message="Deconfiguring unattended-upgrades..."
-
-mv "/etc/apt/50unattended-upgrades.backup" "/etc/apt/apt.conf.d/50unattended-upgrades"
+_apticron_restore_config
+_unattended_upgrades_restore_config
+_02periodic_remove
 
 #=================================================
 # END OF SCRIPT

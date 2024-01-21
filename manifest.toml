@@ -1,0 +1,88 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "unattended_upgrades"
+name = "Unattended-upgrades"
+description.en = "Daily automatic upgrades"
+description.fr = "Mise à jour automatique quotidienne"
+
+version = "1.0~ynh7"
+
+maintainers = []
+
+[upstream]
+license = "GPL-2.0-or-later"
+website = "https://wiki.debian.org/UnattendedUpgrades"
+admindoc = "https://wiki.debian.org/UnattendedUpgrades"
+userdoc = "https://manpages.debian.org/stretch/apticron/apticron.1.en.html"
+
+[integration]
+yunohost = ">= 4.3.0"
+architectures = "all"
+multi_instance = false
+ldap = "not_relevant"
+sso = "not_relevant"
+disk = "50M"
+ram.build = "5M"
+ram.runtime = "50M"
+
+[install]
+    [install.upgrade_level]
+    ask.en = "Choose the sources of packages to automatically upgrade"
+    ask.fr = "Choisissez les sources des paquets à mettre à jour automatiquement"
+    type = "select"
+    choices.security_only = "Security only"
+    choices.security_and_updates = "Security and updates"
+    default = "security_only"
+
+    [install.ynh_update]
+    ask.en = "Would you like to update YunoHost packages automatically?"
+    ask.fr = "Souhaitez-vous mettre à jour les paquets YunoHost automatiquement ?"
+    type = "boolean"
+    default = true
+
+    [install.previous_apticron]
+    ask.en = "Would you like to receive an email to inform which upgrades need to be done?"
+    ask.fr = "Souhaitez-vous recevoir un email pour vous informer des mises à jour nécessaires ?"
+    type = "boolean"
+    default = true
+
+    [install.after_apticron]
+    ask.en = "Would you like to receive an email to verify if there any upgrades left after each auto upgrade?"
+    ask.fr = "Souhaitez-vous recevoir un email pour vérifier s'il reste des mises à jour après chaque mise à niveau automatique ?"
+    type = "boolean"
+    default = true
+
+    [install.unattended_mail]
+    ask.en = "Would you like to receive an email from Unattended-Upgrades?"
+    ask.fr = "Souhaitez-vous recevoir un email de Unattended-Upgrades ?"
+    type = "select"
+    choices.on_upgrade = "If an upgrade has been done"
+    choices.on_error = "Only if there was an error"
+    choices.never = "Never"
+    default = "on_upgrade"
+
+    [install.unattended_verbosity]
+    ask.en = "Choose the level of verbosity of Unattended-Upgrades mail"
+    ask.fr = "Choisir le niveau de verbosité du mail de Unattended-Upgrades"
+    type = "select"
+    choices.v1 = "Progress report only"
+    choices.v2 = "Progress report and command outputs"
+    choices.v3 = "Progress report and command outputs and trace"
+    # help.fr = "1: Rapport d'avancement seulement.<br>2: Rapport d'avancement et sortie de commandes.<br>3: Rapport d'avancement, sortie de commandes et trace."
+    default = "v1"
+
+[resources]
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.permissions]
+
+    [resources.apt]
+    packages = [
+        "apticron",
+        "unattended-upgrades",
+        "apt-listchanges",
+    ]

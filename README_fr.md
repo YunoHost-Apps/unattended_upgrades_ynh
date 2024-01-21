@@ -16,22 +16,13 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 
 ## Vue d’ensemble
 
-Mise à jour automatique quotidienne
+This package installs `unattended-upgrades` and `apticron` to:
 
-**Version incluse :** 1.0~ynh6
-## Avertissements / informations importantes
+* automatically install security updates (or all updates if selected)
+* send automatic messages about available and done updates
 
-## Configuration
 
-Regardez les fichiers de configuration suivant pour Unattended-upgrades
- * /etc/apt/apt.conf.d/50unattended-upgrades
- * /etc/apt/apt.conf.d/02periodic
-
-Et celui-ci pour Apticron
- * /etc/apticron/apticron.conf
-Avec son cron
- * /etc/cron.d/apticron
-
+**Version incluse :** 1.0~ynh7
 ## Documentations et ressources
 
 * Site officiel de l’app : <https://wiki.debian.org/UnattendedUpgrades>

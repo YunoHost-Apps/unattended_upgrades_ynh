@@ -1,6 +1,6 @@
 [reset_default_unattended]
 name = "Reset the 50unattended-upgrades config file and restore a default one."
-command = "/bin/bash scripts/actions/reset_default_config \"50unattended-upgrades\""
+command = "/bin/bash scripts/actions/reapply_config \"50unattended-upgrades\""
 # user = "root"  # optional
 # cwd = "/" # optional
 # accepted_return_codes = [0, 1, 2, 3]  # optional
@@ -9,17 +9,16 @@ description = "Reset the unattended-upgrades config file 50unattended-upgrades."
 
 [reset_default_periodic]
 name = "Reset the 02periodic apt config file and restore a default one."
-command = "/bin/bash scripts/actions/reset_default_config \"02periodic\""
+command = "/bin/bash scripts/actions/reapply_config \"02periodic\""
 # user = "root"  # optional
 # cwd = "/" # optional
 # accepted_return_codes = [0, 1, 2, 3]  # optional
 accepted_return_codes = [0]
 description = "Reset the config file 02periodic."
 
-
 [reset_default_app]
 name = "Reset the app with a default configuration."
-command = "/bin/bash scripts/actions/reset_default_app"
+command = "/bin/bash scripts/actions/reapply_config \"50unattended-upgrades\" \"02periodic\" \"apticron\""
 # user = "root"  # optional
 # cwd = "/" # optional
 # accepted_return_codes = [0, 1, 2, 3]  # optional

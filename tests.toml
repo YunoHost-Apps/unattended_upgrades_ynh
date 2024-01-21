@@ -1,0 +1,33 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/tests.v1.schema.json
+
+test_format = 1.0
+
+[default]
+    args.upgrade_level = "security_only"
+    args.ynh_update = true
+    args.previous_apticron = true
+    args.after_apticron = true
+    args.unattended_mail = "on_upgrade"
+    args.unattended_verbosity = "v1"
+
+    [default.test_upgrade_from.4e342d41]
+    name = "Merge pull request #16 from YunoHost-Apps/testing"
+    args.upgrade_level = "Security only"
+    args.unattended_mail = "If an upgrade has been done"
+    args.unattended_verbosity = "1"
+
+[suite_2]
+    args.upgrade_level = "security_and_updates"
+    args.ynh_update = false
+    args.previous_apticron = false
+    args.after_apticron = true
+    args.unattended_mail = "on_error"
+    args.unattended_verbosity = "v2"
+
+[suite_3]
+    args.upgrade_level = "security_only"
+    args.ynh_update = false
+    args.previous_apticron = true
+    args.after_apticron = false
+    args.unattended_mail = "never"
+    args.unattended_verbosity = "v3"
