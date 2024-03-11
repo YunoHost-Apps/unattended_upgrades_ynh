@@ -14,13 +14,10 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_restore_file --origin_path="$apticron_config"
-ynh_restore_file --origin_path="$apticron_config_backup"
 
 ynh_restore_file --origin_path="$apticron_cron"
-ynh_restore_file --origin_path="$apticron_cron_backup"
 
 ynh_restore_file --origin_path="$unattended_upgrades_config"
-ynh_restore_file --origin_path="$unattended_upgrades_config_backup"
 
 ynh_restore_file --origin_path="/etc/apt/apt.conf.d/02periodic"
 
