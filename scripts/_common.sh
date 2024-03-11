@@ -31,22 +31,22 @@ _apticron_set_config() {
     # Create a backup of the cron file for the reset action
     cp "$apticron_cron" "$apticron_cron_backup"
 
-    # Copy and comment the current cron
-    ynh_replace_string --match_string="^.* root if.*" --replace_string="#&\n&" --target_file="$apticron_cron"
-    # Modify the time to set at 20:00 every day
-    ynh_replace_string --match_string="^[[:digit:]].*\( root if.*\)" --replace_string="0 20 * * *\1" --target_file="$apticron_cron"
-    # Copy the new cron and set the time to 2:00 every night
-    ynh_replace_string --match_string="^0 20\(.*\)" --replace_string="&\n0 2\1" --target_file="$apticron_cron"
+    # Clear everything, keep only the first (official) one. Uncomment.
+    origin_line=$(grep -m 1 "apticron --cron" "$apticron_cron" | sed 's/^#* *//')
 
-    if [ "$previous_apticron" -eq 0 ]; then
-        # Comment the first cron
-        ynh_replace_string --match_string="^0 20 .*" --replace_string="#&" --target_file="$apticron_cron"
-    fi
-
-    if [ "$after_apticron" -eq 0 ]; then
-        # Comment the second cron
-        ynh_replace_string --match_string="^0 2 .*" --replace_string="#&" --target_file="$apticron_cron"
-    fi
+    # Remove all lines matching
+    ynh_replace_string --match_string=".*apticron --cron.*" --replace_string="" --target_file="$apticron_cron"
+    # Remove empty lines
+    sed -i '/^\s*$/d' "$apticron_cron"
+    (
+        echo "# $origin_line"
+        if [ "$previous_apticron" -eq 1 ]; then
+            echo "$origin_line" | sed 's|^.*\( root if.*\)|0 20 * * *\1|'
+        fi
+        if [ "$after_apticron" -eq 1 ]; then
+            echo "$origin_line" | sed 's|^.*\( root if.*\)|0 2 * * *\1|'
+        fi
+    ) >> "$apticron_cron"
 }
 
 _apticron_restore_config() {
