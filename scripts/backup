@@ -19,13 +19,10 @@ ynh_print_info --message="Declaring files to be backed up..."
 #=================================================
 
 ynh_backup --src_path="$apticron_config"
-ynh_backup --src_path="$apticron_config_backup"
 
 ynh_backup --src_path="$apticron_cron"
-ynh_backup --src_path="$apticron_cron_backup"
 
 ynh_backup --src_path="$unattended_upgrades_config"
-ynh_backup --src_path="$unattended_upgrades_config_backup"
 
 ynh_backup --src_path="/etc/apt/apt.conf.d/02periodic"
 
