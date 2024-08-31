@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC STARTING
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -15,29 +9,29 @@ source /usr/share/yunohost/helpers
 
 # Get main domain and buid the url of the admin panel of the app.
 admin_panel="https://$(grep portal_domain /etc/ssowat/conf.json | cut -d'"' -f4)/yunohost/admin/#/apps/$app"
-ynh_app_setting_set --app="$app" --key=admin_panel --value="$admin_panel"
+ynh_app_setting_set --key=admin_panel --value="$admin_panel"
 
-# ynh_app_setting_set --app=$app --key=overwrite_periodic --value=1
-# ynh_app_setting_set --app=$app --key=admin_mail_html --value=1
+# ynh_app_setting_set --key=overwrite_periodic --value=1
+# ynh_app_setting_set --key=admin_mail_html --value=1
 
 #=================================================
 # CONFIGURE APTICRON
 #=================================================
-ynh_script_progression --message="Configuring Apticron..."
+ynh_script_progression "Configuring Apticron..."
 
 _apticron_set_config
 
 #=================================================
 # CONFIGURE UNATTENDED-UPGRADES
 #=================================================
-ynh_script_progression --message="Configuring Unattended-Upgrades..."
+ynh_script_progression "Configuring Unattended-Upgrades..."
 
 _unattended_upgrades_set_config
 
 #=================================================
 # CONFIGURE APT PERIODIC FOR UNATTENDED
 #=================================================
-ynh_script_progression --message="Configure APT Periodic for Unattended" --weight=2
+ynh_script_progression "Configure APT Periodic for Unattended"
 
 _02periodic_set_config
 
@@ -45,4 +39,4 @@ _02periodic_set_config
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression "Installation of $app completed"
