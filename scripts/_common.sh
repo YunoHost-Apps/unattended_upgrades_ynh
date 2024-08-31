@@ -1,11 +1,7 @@
 #!/bin/bash
 
 #=================================================
-# COMMON VARIABLES
-#=================================================
-
-#=================================================
-# PERSONAL HELPERS
+# COMMON VARIABLES AND CUSTOM HELPERS
 #=================================================
 
 apticron_config="/etc/apticron/apticron.conf"
@@ -23,10 +19,10 @@ _apticron_set_config() {
     # Create a backup of the config file for the reset action
     cp "$apticron_config" "$apticron_config_backup"
 
-    ynh_replace_string --match_string="# CUSTOM_SUBJECT=.*" \
-        --replace_string="&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'" --target_file="$apticron_config"
-    ynh_replace_string --match_string="# CUSTOM_NO_UPDATES_SUBJECT=.*" \
-        --replace_string="&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\\\o/\'" --target_file="$apticron_config"
+    ynh_replace --match="# CUSTOM_SUBJECT=.*" \
+        --replace="&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'" --file="$apticron_config"
+    ynh_replace --match="# CUSTOM_NO_UPDATES_SUBJECT=.*" \
+        --replace="&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\\\o/\'" --file="$apticron_config"
 
     # Create a backup of the cron file for the reset action
     cp "$apticron_cron" "$apticron_cron_backup"
@@ -35,7 +31,7 @@ _apticron_set_config() {
     origin_line=$(grep -m 1 "apticron --cron" "$apticron_cron" | sed 's/^#* *//')
 
     # Remove all lines matching
-    ynh_replace_string --match_string=".*apticron --cron.*" --replace_string="" --target_file="$apticron_cron"
+    ynh_replace --match=".*apticron --cron.*" --replace="" --file="$apticron_cron"
     # Remove empty lines
     sed -i '/^\s*$/d' "$apticron_cron"
     (
@@ -54,7 +50,6 @@ _apticron_restore_config() {
     mv "$apticron_cron_backup" "$apticron_cron"
 }
 
-
 unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
 unattended_upgrades_config_backup="/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup"
 
@@ -65,37 +60,37 @@ _unattended_upgrades_set_config() {
     # Configure upgrade sources
     # Allow other updates
     if [ "$upgrade_level" = "security_and_updates" ]; then
-        ynh_replace_string --match_string="//\(.*\"o=Debian,a=stable\)" --replace_string="\1" --target_file="$unattended_upgrades_config"
-        ynh_replace_string --match_string="//\(.*\"o=Debian,a=stable-updates\)" --replace_string="\1" --target_file="$unattended_upgrades_config"
+        ynh_replace --match="//\(.*\"o=Debian,a=stable\)" --replace="\1" --file="$unattended_upgrades_config"
+        ynh_replace --match="//\(.*\"o=Debian,a=stable-updates\)" --replace="\1" --file="$unattended_upgrades_config"
     fi
 
     # Add YunoHost upgrade source
     if [ $ynh_update -eq 1 ]; then
-        ynh_replace_string --match_string="origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
-            --replace_string="&\n\n        //YunoHost upgrade\n        \"o=YunoHost,a=stable\";" --target_file="$unattended_upgrades_config"
+        ynh_replace --match="origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
+            --replace="&\n\n        //YunoHost upgrade\n        \"o=YunoHost,a=stable\";" --file="$unattended_upgrades_config"
     fi
 
     # Allow MinimalSteps upgrading to reduce risk in case of reboot
-    ynh_replace_string --match_string="//\(Unattended-Upgrade::MinimalSteps\).*" --replace_string="\1 \"true\";" --target_file="$unattended_upgrades_config"
+    ynh_replace --match="//\(Unattended-Upgrade::MinimalSteps\).*" --replace="\1 \"true\";" --file="$unattended_upgrades_config"
 
     # Configure Unattended Upgrades mailing
     if [ "$unattended_mail" = "on_upgrade" ]; then
         # Allow mail to root
-        ynh_replace_string --match_string="//\(Unattended-Upgrade::Mail \)" --replace_string="\1" --target_file="$unattended_upgrades_config"
+        ynh_replace --match="//\(Unattended-Upgrade::Mail \)" --replace="\1" --file="$unattended_upgrades_config"
 
         # Send mail even if there's no errors
-        ynh_replace_string --match_string="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"false\";" --target_file="$unattended_upgrades_config"
+        ynh_replace --match="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace="\1\"false\";" --file="$unattended_upgrades_config"
 
     elif [ "$unattended_mail" = "on_error" ]; then
         # Allow mail to root
-        ynh_replace_string --match_string="//\(Unattended-Upgrade::Mail \)" --replace_string="\1" --target_file="$unattended_upgrades_config"
+        ynh_replace --match="//\(Unattended-Upgrade::Mail \)" --replace="\1" --file="$unattended_upgrades_config"
 
         # Send mail only if there's an error
-        ynh_replace_string --match_string="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace_string="\1\"true\";" --target_file="$unattended_upgrades_config"
+        ynh_replace --match="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace="\1\"true\";" --file="$unattended_upgrades_config"
 
     else # "Never"
         # Comment "Unattended-Upgrade::Mail" if it isn't already commented
-        ynh_replace_string --match_string="^\(Unattended-Upgrade::Mail \)" --replace_string="//\1" --target_file="$unattended_upgrades_config"
+        ynh_replace --match="^\(Unattended-Upgrade::Mail \)" --replace="//\1" --file="$unattended_upgrades_config"
     fi
 }
 
@@ -103,15 +98,14 @@ _unattended_upgrades_restore_config() {
     mv "$unattended_upgrades_config_backup" "$unattended_upgrades_config"
 }
 
-
 _02periodic_config="/etc/apt/apt.conf.d/02periodic"
 
 _02periodic_set_config() {
-    ynh_add_config --template="../conf/02periodic" --destination="$_02periodic_config"
+    ynh_config_add --template="02periodic" --destination="$_02periodic_config"
 }
 
 _02periodic_remove() {
-    ynh_secure_remove "$_02periodic_config"
+    ynh_safe_rm "$_02periodic_config"
 }
 
 #=================================================
@@ -124,10 +118,6 @@ _02periodic_remove() {
 
 #=================================================
 # FUTUR OFFICIAL HELPERS
-#=================================================
-
-#=================================================
-# EXPERIMENTAL HELPERS
 #=================================================
 
 # Create a changelog for an app after an upgrade from the file CHANGELOG.md.
@@ -143,7 +133,7 @@ _02periodic_remove() {
 # The changelog is printed into the file ./changelog and ./changelog_lite
 ynh_app_changelog () {
     # Declare an array to define the options of this helper.
-    local legacy_args=foc
+    #REMOVEME? local legacy_args=foc
     declare -Ar args_array=( [f]=format= [o]=output= [c]=changelog= )
     local format
     local output
@@ -165,8 +155,8 @@ ynh_app_changelog () {
         return 0
     fi
 
-#REMOVEME?     local current_version=$(ynh_read_manifest --manifest="/etc/yunohost/apps/$YNH_APP_INSTANCE_NAME/manifest.json" --manifest_key="version")
-    local update_version=$(ynh_read_manifest --manifest="../manifest.json" --manifest_key="version")
+#REMOVEME?     local current_version=$(ynh_read_manifest --key="version")
+    local update_version=$(ynh_read_manifest --key="version")
 
     # Get the line of the version to update to into the changelog
     local update_version_line=$(grep --max-count=1 --line-number "^## \[$update_version" "$original_changelog" | cut -d':' -f1)
@@ -210,14 +200,14 @@ ynh_app_changelog () {
     if [ "$format" = "html" ]
     then
         # Replace markdown links by html links
-        ynh_replace_string --match_string="\[\(.*\)\](\(.*\)))" --replace_string="<a href=\"\2\">\1</a>)" --target_file="$final_changelog"
-        ynh_replace_string --match_string="\[\(.*\)\](\(.*\))" --replace_string="<a href=\"\2\">\1</a>" --target_file="$final_changelog"
+        ynh_replace --match="\[\(.*\)\](\(.*\)))" --replace="<a href=\"\2\">\1</a>)" --file="$final_changelog"
+        ynh_replace --match="\[\(.*\)\](\(.*\))" --replace="<a href=\"\2\">\1</a>" --file="$final_changelog"
     elif [ "$format" = "plain" ]
     then
         # Change title format.
-        ynh_replace_string --match_string="^##.*\[\(.*\)\](\(.*\)) - \(.*\)$" --replace_string="## \1 (\3) - \2" --target_file="$final_changelog"
+        ynh_replace --match="^##.*\[\(.*\)\](\(.*\)) - \(.*\)$" --replace="## \1 (\3) - \2" --file="$final_changelog"
         # Change modifications lines format.
-        ynh_replace_string --match_string="^\([-*]\).*\[\(.*\)\]\(.*\)" --replace_string="\1 \2 \3" --target_file="$final_changelog"
+        ynh_replace --match="^\([-*]\).*\[\(.*\)\]\(.*\)" --replace="\1 \2 \3" --file="$final_changelog"
     fi
     # else markdown. As the file is already in markdown, nothing to do.
 
@@ -239,7 +229,7 @@ ynh_app_changelog () {
             # Remove the line if it's a title or a blank line, and the previous one was a title as well.
             if ( [ "${line:0:1}" = "#" ] || [ ${#line} -eq 0 ] ) && [ "${previous_line:0:1}" = "#" ]
             then
-                ynh_replace_special_string --match_string="${previous_line//[/.}" --replace_string="" --target_file="${final_changelog}_lite"
+                ynh_replace_regex --match="${previous_line//[/.}" --replace="" --file="${final_changelog}_lite"
             fi
         fi
         previous_line="$line"
@@ -249,7 +239,7 @@ ynh_app_changelog () {
     sed --in-place '/^$/d' "${final_changelog}_lite"
 
     # Restore changelog format with blank lines
-    ynh_replace_string --match_string="^##.*" --replace_string="\n\n&\n" --target_file="${final_changelog}_lite"
+    ynh_replace --match="^##.*" --replace="\n\n&\n" --file="${final_changelog}_lite"
     # Remove the 2 first blank lines
     sed --in-place '1,2d' "${final_changelog}_lite"
     # Add a blank line at the end
