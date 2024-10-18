@@ -5,7 +5,7 @@
 
 # YunoHost 上的 Unattended-upgrades
 
-[![集成程度](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://dash.yunohost.org/appci/app/unattended_upgrades) ![工作状态](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)
+[![集成程度](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)
 
 [![使用 YunoHost 安装 Unattended-upgrades](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=unattended_upgrades)
 

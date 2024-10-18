@@ -5,7 +5,7 @@ Il NE doit PAS être modifié à la main.
 
 # Unattended-upgrades pour YunoHost
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://dash.yunohost.org/appci/app/unattended_upgrades) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)
+[![Niveau d’intégration](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)
 
 [![Installer Unattended-upgrades avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=unattended_upgrades)
 
