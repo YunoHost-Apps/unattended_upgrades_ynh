@@ -22,7 +22,7 @@ This package installs `unattended-upgrades` and `apticron` to:
 * send automatic messages about available and done updates
 
 
-**Versión proporcionada:** 1.1~ynh1
+**Versión proporcionada:** 1.1~ynh2
 ## Documentación e recursos
 
 - Web oficial da app: <https://wiki.debian.org/UnattendedUpgrades>
