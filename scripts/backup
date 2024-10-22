@@ -22,7 +22,7 @@ ynh_backup --src_path="$apticron_config"
 
 ynh_backup --src_path="$apticron_cron"
 
-ynh_backup --src_path="$unattended_upgrades_config"
+ynh_backup --src_path="/etc/apt/apt.conf.d/51unattended-upgrades-override"
 
 ynh_backup --src_path="/etc/apt/apt.conf.d/02periodic"
 

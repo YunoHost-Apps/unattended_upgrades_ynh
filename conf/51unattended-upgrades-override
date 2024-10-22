@@ -1,0 +1,23 @@
+// This file is part of the unattended-upgrades Yunohost package.
+//
+// It overrides values from 50unattended-upgrades.
+
+Unattended-Upgrade {
+
+    Origins-Pattern {
+        // When selecting security and updates
+        __COMMENT_SECURITY_AND_UPDATES__"origin=Debian,codename=${distro_codename}-updates";
+        __COMMENT_SECURITY_AND_UPDATES__"origin=Debian,codename=${distro_codename}-proposed-updates";
+
+        // To upgrade YunoHost deb packages (not app packages)
+        __COMMENT_YUNOHOST_UPGRADES__"o=YunoHost,a=stable";
+    };
+
+    // Reduce risks related to power loss
+    MinimalSteps "true";
+
+    __COMMENT_ALL_MAIL__Mail "";
+    // always, only-on-error, on-change
+    MailReport "__MAIL_LEVEL__";
+
+};
