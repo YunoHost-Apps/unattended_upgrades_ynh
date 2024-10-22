@@ -11,7 +11,7 @@ ynh_restore "$apticron_config"
 
 ynh_restore "$apticron_cron"
 
-ynh_restore "$unattended_upgrades_config"
+ynh_restore "/etc/apt/apt.conf.d/51unattended-upgrades-override"
 
 ynh_restore "/etc/apt/apt.conf.d/02periodic"
 

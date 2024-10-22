@@ -50,8 +50,6 @@ _apticron_restore_config() {
     mv "$apticron_cron_backup" "$apticron_cron"
 }
 
-unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
-unattended_upgrades_config_backup="/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup"
 
 _unattended_upgrades_set_config() {
     # Allow other updates
@@ -85,9 +83,6 @@ _unattended_upgrades_set_config() {
     ynh_config_add --template="51unattended-upgrades-override" "/etc/apt/apt.conf.d/51unattended-upgrades-override"
 }
 
-_unattended_upgrades_restore_config() {
-    mv "$unattended_upgrades_config_backup" "$unattended_upgrades_config"
-}
 
 _02periodic_config="/etc/apt/apt.conf.d/02periodic"
 

@@ -31,9 +31,10 @@ if [ ! -e "$apticron_cron" ]; then
     ynh_replace --match="^#\([[:digit:]].*\)" --replace="\1" --file="$apticron_cron"
 fi
 
-# Make a non perfect backup for apticron cron file if non existent
-if [ ! -e "$unattended_upgrades_config" ]; then
-    cp "$unattended_upgrades_config" "$unattended_upgrades_config_backup"
+unattended_upgrades_config_backup="/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup"
+if [ -f "$unattended_upgrades_config_backup" ]; then
+    # Restore backup, we have stopped editing this file in-place.
+    mv "$unattended_upgrades_config_backup" "/etc/apt/apt.conf.d/50unattended-upgrades"
 fi
 
 #=================================================

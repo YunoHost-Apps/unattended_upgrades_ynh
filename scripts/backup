@@ -13,7 +13,7 @@ ynh_backup "$apticron_config"
 
 ynh_backup "$apticron_cron"
 
-ynh_backup "$unattended_upgrades_config"
+ynh_backup "/etc/apt/apt.conf.d/51unattended-upgrades-override"
 
 ynh_backup "/etc/apt/apt.conf.d/02periodic"
 
