@@ -37,7 +37,6 @@ if [[ "$*" =~ ^50unattended-upgrades$ ]]; then
     ynh_script_progression --message="Resetting unattended-upgrades..."
 
     ynh_backup_if_checksum_is_different --file="$unattended_upgrades_config"
-    _unattended_upgrades_restore_config
     _unattended_upgrades_set_config
     ynh_store_file_checksum --file="$unattended_upgrades_config"
 fi

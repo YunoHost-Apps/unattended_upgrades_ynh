@@ -55,9 +55,6 @@ _apticron_restore_config() {
 }
 
 
-unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
-unattended_upgrades_config_backup="/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup"
-
 _unattended_upgrades_set_config() {
     # Allow other updates
     case "$upgrade_level" in
@@ -88,10 +85,6 @@ _unattended_upgrades_set_config() {
     esac
 
     ynh_add_config --template="51unattended-upgrades-override" "/etc/apt/apt.conf.d/51unattended-upgrades-override"
-}
-
-_unattended_upgrades_restore_config() {
-    mv "$unattended_upgrades_config_backup" "$unattended_upgrades_config"
 }
 
 
