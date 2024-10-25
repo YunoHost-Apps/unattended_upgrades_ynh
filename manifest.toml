@@ -7,7 +7,7 @@ name = "Unattended-upgrades"
 description.en = "Daily automatic upgrades"
 description.fr = "Mise à jour automatique quotidienne"
 
-version = "1.1~ynh2"
+version = "1.2~ynh1"
 
 maintainers = []
 
@@ -18,7 +18,8 @@ admindoc = "https://wiki.debian.org/UnattendedUpgrades"
 userdoc = "https://manpages.debian.org/stretch/apticron/apticron.1.en.html"
 
 [integration]
-yunohost = ">= 11.2"
+yunohost = ">= 11.2.18"
+helpers_version = "2.1"
 architectures = "all"
 multi_instance = false
 ldap = "not_relevant"
