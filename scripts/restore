@@ -7,13 +7,15 @@ source /usr/share/yunohost/helpers
 # RESTORE UNATTENDED-UPGRADES CONFIG
 #=================================================
 
-ynh_restore "$apticron_config"
+ynh_backup "$apticron_config"
 
-ynh_restore "$apticron_cron"
+ynh_backup "$apticron_daily_override"
 
-ynh_restore "/etc/apt/apt.conf.d/51unattended-upgrades-override"
+ynh_backup "$unattended_upgrades_config"
 
-ynh_restore "/etc/apt/apt.conf.d/02periodic"
+ynh_backup "$_02periodic_config"
+
+systemctl daemon-reload
 
 #=================================================
 # END OF SCRIPT

@@ -15,20 +15,13 @@ if [ -z "${overwrite_periodic:-}" ]; then
     ynh_app_setting_set --key=overwrite_periodic --value=$overwrite_periodic
 fi
 
-# Make a non perfect backup for apticron.conf if non existent
-if [ ! -e "$apticron_config_backup" ]; then
-    # Create a backup of the config file for the reset action
-    cp "$apticron_config" "$apticron_config_backup"
-    sed --in-place '/^CUSTOM_SUBJECT=/d' "$apticron_config_backup"
-    sed --in-place '/^CUSTOM_NO_UPDATES_SUBJECT=/d' "$apticron_config_backup"
+old_apticron_config_backup="/etc/yunohost/apps/$app/conf/apticron.conf.backup"
+if [ -e "$old_apticron_config_backup" ]; then
+    mv "$old_apticron_config_backup" "${apticron_config}.backup"
 fi
-
-# Make a non perfect backup for apticron cron file if non existent
-if [ ! -e "$apticron_cron" ]; then
-    # Create a backup of the config file for the reset action
-    cp "$apticron_cron" "$apticron_cron"
-    sed --in-place '/^[[:digit:]]/d' "$apticron_cron"
-    ynh_replace --match="^#\([[:digit:]].*\)" --replace="\1" --file="$apticron_cron"
+if [ ! -e "${apticron_config}.backup" ]; then
+    # Not a great backup but eh…
+    cp "$apticron_config" "${apticron_config}.backup"
 fi
 
 unattended_upgrades_config_backup="/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup"
