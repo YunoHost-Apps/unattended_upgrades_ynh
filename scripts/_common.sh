@@ -101,6 +101,7 @@ _unattended_upgrades_restore_config() {
 _02periodic_config="/etc/apt/apt.conf.d/02periodic"
 
 _02periodic_set_config() {
+    unattended_verbosity_number="${unattended_verbosity#v}"
     ynh_config_add --template="02periodic" --destination="$_02periodic_config"
 }
 

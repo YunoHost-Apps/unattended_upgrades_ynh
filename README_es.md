@@ -5,7 +5,7 @@ No se debe editar a mano.
 
 # Unattended-upgrades para Yunohost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://dash.yunohost.org/appci/app/unattended_upgrades) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)
+[![Nivel de integración](https://dash.yunohost.org/integration/unattended_upgrades.svg)](https://ci-apps.yunohost.org/ci/apps/unattended_upgrades/) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/unattended_upgrades.maintain.svg)
 
 [![Instalar Unattended-upgrades con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=unattended_upgrades)
 
@@ -22,7 +22,7 @@ This package installs `unattended-upgrades` and `apticron` to:
 * send automatic messages about available and done updates
 
 
-**Versión actual:** 1.1~ynh1
+**Versión actual:** 1.1~ynh2
 ## Documentaciones y recursos
 
 - Sitio web oficial: <https://wiki.debian.org/UnattendedUpgrades>
@@ -33,7 +33,7 @@ This package installs `unattended-upgrades` and `apticron` to:
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/unattended_upgrades_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 
