@@ -71,7 +71,7 @@ _unattended_upgrades_set_config() {
             comment_all_mail=""
             mail_level="only-on-error"
             ;;
-        never)
+        never|*)
             comment_all_mail="//"
             mail_level="on-change"
             ;;
