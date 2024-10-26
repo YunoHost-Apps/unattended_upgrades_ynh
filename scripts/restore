@@ -7,13 +7,13 @@ source /usr/share/yunohost/helpers
 # RESTORE UNATTENDED-UPGRADES CONFIG
 #=================================================
 
-ynh_backup "$apticron_config"
+ynh_restore "$apticron_config"
 
-ynh_backup "$apticron_daily_override"
+ynh_restore "$apticron_daily_override"
 
-ynh_backup "$unattended_upgrades_config"
+ynh_restore "$unattended_upgrades_config"
 
-ynh_backup "$_02periodic_config"
+ynh_restore "$_02periodic_config"
 
 systemctl daemon-reload
 
