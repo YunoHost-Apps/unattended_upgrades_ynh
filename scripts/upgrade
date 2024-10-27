@@ -9,11 +9,7 @@ source /usr/share/yunohost/helpers
 ynh_script_progression "Ensuring downward compatibility..."
 
 # If overwrite_periodic doesn't exist, create it
-# FIXMEhelpers2.1: maybe replace with: ynh_app_setting_set_default --key=overwrite_periodic --value=1
-if [ -z "${overwrite_periodic:-}" ]; then
-    overwrite_periodic=1
-    ynh_app_setting_set --key=overwrite_periodic --value=$overwrite_periodic
-fi
+ynh_app_setting_set_default --key=overwrite_periodic --value=1
 
 # Migrate old settings values
 if [[ "$upgrade_level" == S* ]]; then
