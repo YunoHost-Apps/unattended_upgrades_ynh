@@ -9,31 +9,27 @@ source /usr/share/yunohost/helpers
 ynh_script_progression "Ensuring downward compatibility..."
 
 # If overwrite_periodic doesn't exist, create it
-# FIXMEhelpers2.1: maybe replace with: ynh_app_setting_set_default --key=overwrite_periodic --value=1
-if [ -z "${overwrite_periodic:-}" ]; then
-    overwrite_periodic=1
-    ynh_app_setting_set --key=overwrite_periodic --value=$overwrite_periodic
+ynh_app_setting_set_default --key=overwrite_periodic --value=1
+
+# Migrate old settings values
+if [[ "$upgrade_level" == S* ]]; then
+    upgrade_level=$(echo "$upgrade_level" | tr " " "_" | tr "S" "s")
+    ynh_app_setting_set --key=upgrade_level --value="$upgrade_level"
 fi
 
-# Make a non perfect backup for apticron.conf if non existent
-if [ ! -e "$apticron_config_backup" ]; then
-    # Create a backup of the config file for the reset action
-    cp "$apticron_config" "$apticron_config_backup"
-    sed --in-place '/^CUSTOM_SUBJECT=/d' "$apticron_config_backup"
-    sed --in-place '/^CUSTOM_NO_UPDATES_SUBJECT=/d' "$apticron_config_backup"
+old_apticron_config_backup="/etc/yunohost/apps/$app/conf/apticron.conf.backup"
+if [ -e "$old_apticron_config_backup" ]; then
+    mv "$old_apticron_config_backup" "${apticron_config}.backup"
+fi
+if [ ! -e "${apticron_config}.backup" ]; then
+    # Not a great backup but eh…
+    cp "$apticron_config" "${apticron_config}.backup"
 fi
 
-# Make a non perfect backup for apticron cron file if non existent
-if [ ! -e "$apticron_cron" ]; then
-    # Create a backup of the config file for the reset action
-    cp "$apticron_cron" "$apticron_cron"
-    sed --in-place '/^[[:digit:]]/d' "$apticron_cron"
-    ynh_replace --match="^#\([[:digit:]].*\)" --replace="\1" --file="$apticron_cron"
-fi
-
-# Make a non perfect backup for apticron cron file if non existent
-if [ ! -e "$unattended_upgrades_config" ]; then
-    cp "$unattended_upgrades_config" "$unattended_upgrades_config_backup"
+unattended_upgrades_config_backup="/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup"
+if [ -f "$unattended_upgrades_config_backup" ]; then
+    # Restore backup, we have stopped editing this file in-place.
+    mv "$unattended_upgrades_config_backup" "/etc/apt/apt.conf.d/50unattended-upgrades"
 fi
 
 #=================================================
