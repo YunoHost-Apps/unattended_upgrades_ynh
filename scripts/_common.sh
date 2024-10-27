@@ -5,7 +5,7 @@
 #=================================================
 
 apticron_config="/etc/apticron/apticron.conf"
-apticron_daily_override="/etc/systemd/system/apt-daily-upgrade.timer.d/override.conf"
+apticron_daily_override="/etc/systemd/system/apt-daily-upgrade.service.d/override.conf"
 
 _apticron_set_config() {
     # If the config file doesn't exist, copy the model
