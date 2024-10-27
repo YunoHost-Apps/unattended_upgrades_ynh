@@ -5,10 +5,7 @@
 #=================================================
 
 apticron_config="/etc/apticron/apticron.conf"
-apticron_config_backup="/etc/yunohost/apps/$app/conf/apticron.conf.backup"
-
-apticron_cron="/etc/cron.d/apticron"
-apticron_cron_backup="/etc/yunohost/apps/$app/conf/apticron.crond.backup"
+apticron_daily_override="/etc/systemd/system/apt-daily-upgrade.service.d/override.conf"
 
 _apticron_set_config() {
     # If the config file doesn't exist, copy the model
@@ -17,242 +14,76 @@ _apticron_set_config() {
     fi
 
     # Create a backup of the config file for the reset action
-    cp "$apticron_config" "$apticron_config_backup"
+    if [ ! -f "${apticron_config}.backup" ]; then
+        cp "$apticron_config" "${apticron_config}.backup"
+    fi
 
-    ynh_replace --match="# CUSTOM_SUBJECT=.*" \
-        --replace="&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'" --file="$apticron_config"
-    ynh_replace --match="# CUSTOM_NO_UPDATES_SUBJECT=.*" \
-        --replace="&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\\\o/\'" --file="$apticron_config"
+    subject="&\nCUSTOM_SUBJECT=\'[apticron] \$SYSTEM: \$NUM_PACKAGES package update(s)\'"
+    subject_noupdate="&\nCUSTOM_NO_UPDATES_SUBJECT=\'[apticron] \$SYSTEM: Up to date \\\\o/\'"
+    ynh_replace --file="$apticron_config" --match="# CUSTOM_SUBJECT=.*" --replace="$subject"
+    ynh_replace --file="$apticron_config" --match="# CUSTOM_NO_UPDATES_SUBJECT=.*" --replace="$subject_noupdate"
 
-    # Create a backup of the cron file for the reset action
-    cp "$apticron_cron" "$apticron_cron_backup"
+    # Disable cron
+    sed -i 's/^\([^#]\)/# Commented because yunohost package unattended_upgrades use systemd config \1/g' /etc/cron.d/apticron
 
-    # Clear everything, keep only the first (official) one. Uncomment.
-    origin_line=$(grep -m 1 "apticron --cron" "$apticron_cron" | sed 's/^#* *//')
+    # Run apticron via systemd ExecStartPre / ExecStopPost
+    case "$previous_apticron" in
+        0) comment_apticron_pre="# " ;;
+        1) comment_apticron_pre="" ;;
+    esac
+    case "$after_apticron" in
+        0) comment_apticron_post="# " ;;
+        1) comment_apticron_post="" ;;
+    esac
 
-    # Remove all lines matching
-    ynh_replace --match=".*apticron --cron.*" --replace="" --file="$apticron_cron"
-    # Remove empty lines
-    sed -i '/^\s*$/d' "$apticron_cron"
-    (
-        echo "# $origin_line"
-        if [ "$previous_apticron" -eq 1 ]; then
-            echo "$origin_line" | sed 's|^.*\( root if.*\)|0 20 * * *\1|'
-        fi
-        if [ "$after_apticron" -eq 1 ]; then
-            echo "$origin_line" | sed 's|^.*\( root if.*\)|0 2 * * *\1|'
-        fi
-    ) >> "$apticron_cron"
+    mkdir -p "$(dirname "$apticron_daily_override")"
+    ynh_config_add --template="apt-daily-upgrade.override.conf" \
+        --destination="$apticron_daily_override"
+    systemctl daemon-reload
 }
 
 _apticron_restore_config() {
-    mv "$apticron_config_backup" "$apticron_config"
-    mv "$apticron_cron_backup" "$apticron_cron"
+    mv "${apticron_config}.backup" "$apticron_config"
 }
 
-unattended_upgrades_config="/etc/apt/apt.conf.d/50unattended-upgrades"
-unattended_upgrades_config_backup="/etc/yunohost/apps/$app/conf/50unattended-upgrades.backup"
+unattended_upgrades_config="/etc/apt/apt.conf.d/51unattended-upgrades-override"
 
 _unattended_upgrades_set_config() {
-    # Make a backup of 50unattended-upgrades
-    cp "$unattended_upgrades_config" "$unattended_upgrades_config_backup"
-
-    # Configure upgrade sources
     # Allow other updates
-    if [ "$upgrade_level" = "security_and_updates" ]; then
-        ynh_replace --match="//\(.*\"o=Debian,a=stable\)" --replace="\1" --file="$unattended_upgrades_config"
-        ynh_replace --match="//\(.*\"o=Debian,a=stable-updates\)" --replace="\1" --file="$unattended_upgrades_config"
-    fi
+    case "$upgrade_level" in
+        security_only)          comment_security_and_updates="//" ;;
+        security_and_updates)   comment_security_and_updates="" ;;
+    esac
 
     # Add YunoHost upgrade source
-    if [ $ynh_update -eq 1 ]; then
-        ynh_replace --match="origin=Debian,codename=\${distro_codename},label=Debian-Security\";" \
-            --replace="&\n\n        //YunoHost upgrade\n        \"o=YunoHost,a=stable\";" --file="$unattended_upgrades_config"
-    fi
-
-    # Allow MinimalSteps upgrading to reduce risk in case of reboot
-    ynh_replace --match="//\(Unattended-Upgrade::MinimalSteps\).*" --replace="\1 \"true\";" --file="$unattended_upgrades_config"
+    case "$ynh_update" in
+        0)  comment_yunohost_upgrades="//" ;;
+        1)  comment_yunohost_upgrades="" ;;
+    esac
 
     # Configure Unattended Upgrades mailing
-    if [ "$unattended_mail" = "on_upgrade" ]; then
-        # Allow mail to root
-        ynh_replace --match="//\(Unattended-Upgrade::Mail \)" --replace="\1" --file="$unattended_upgrades_config"
+    case "$unattended_mail" in
+        on_upgrade)
+            comment_all_mail=""
+            mail_level="on-change"
+            ;;
+        on_error)
+            comment_all_mail=""
+            mail_level="only-on-error"
+            ;;
+        never|*)
+            comment_all_mail="//"
+            mail_level="on-change"
+            ;;
+    esac
 
-        # Send mail even if there's no errors
-        ynh_replace --match="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace="\1\"false\";" --file="$unattended_upgrades_config"
-
-    elif [ "$unattended_mail" = "on_error" ]; then
-        # Allow mail to root
-        ynh_replace --match="//\(Unattended-Upgrade::Mail \)" --replace="\1" --file="$unattended_upgrades_config"
-
-        # Send mail only if there's an error
-        ynh_replace --match="//\(Unattended-Upgrade::MailOnlyOnError \).*" --replace="\1\"true\";" --file="$unattended_upgrades_config"
-
-    else # "Never"
-        # Comment "Unattended-Upgrade::Mail" if it isn't already commented
-        ynh_replace --match="^\(Unattended-Upgrade::Mail \)" --replace="//\1" --file="$unattended_upgrades_config"
-    fi
+    ynh_config_add --template="51unattended-upgrades-override" --destination="$unattended_upgrades_config"
 }
 
-_unattended_upgrades_restore_config() {
-    mv "$unattended_upgrades_config_backup" "$unattended_upgrades_config"
-}
 
 _02periodic_config="/etc/apt/apt.conf.d/02periodic"
 
 _02periodic_set_config() {
     unattended_verbosity_number="${unattended_verbosity#v}"
     ynh_config_add --template="02periodic" --destination="$_02periodic_config"
-}
-
-_02periodic_remove() {
-    ynh_safe_rm "$_02periodic_config"
-}
-
-#=================================================
-# BACKUP
-#=================================================
-
-#=================================================
-# PACKAGE CHECK BYPASSING...
-#=================================================
-
-#=================================================
-# FUTUR OFFICIAL HELPERS
-#=================================================
-
-# Create a changelog for an app after an upgrade from the file CHANGELOG.md.
-#
-# usage: ynh_app_changelog [--format=markdown/html/plain] [--output=changelog_file] --changelog=changelog_source]
-# | arg: -f --format= - Format in which the changelog will be printed
-#       markdown: Default format.
-#       html:     Turn urls into html format.
-#       plain:    Plain text changelog
-# | arg: -o --output= - Output file for the changelog file (Default ./changelog)
-# | arg: -c --changelog= - CHANGELOG.md source (Default ../CHANGELOG.md)
-#
-# The changelog is printed into the file ./changelog and ./changelog_lite
-ynh_app_changelog () {
-    # Declare an array to define the options of this helper.
-    #REMOVEME? local legacy_args=foc
-    declare -Ar args_array=( [f]=format= [o]=output= [c]=changelog= )
-    local format
-    local output
-    local changelog
-    # Manage arguments with getopts
-    ynh_handle_getopts_args "$@"
-    format=${format:-markdown}
-    output=${output:-changelog}
-    changelog=${changelog:-../CHANGELOG.md}
-
-    local original_changelog="$changelog"
-    local temp_changelog="changelog_temp"
-    local final_changelog="$output"
-
-    if [ ! -n "$original_changelog" ]
-    then
-        echo "No changelog available..." > "$final_changelog"
-        echo "No changelog available..." > "${final_changelog}_lite"
-        return 0
-    fi
-
-#REMOVEME?     local current_version=$(ynh_read_manifest --key="version")
-    local update_version=$(ynh_read_manifest --key="version")
-
-    # Get the line of the version to update to into the changelog
-    local update_version_line=$(grep --max-count=1 --line-number "^## \[$update_version" "$original_changelog" | cut -d':' -f1)
-    # If there's no entry for this version yet into the changelog
-    # Get the first available version
-    if [ -z "$update_version_line" ]
-    then
-        update_version_line=$(grep --max-count=1 --line-number "^##" "$original_changelog" | cut -d':' -f1)
-    fi
-
-    # Get the length of the complete changelog.
-    local changelog_length=$(wc --lines "$original_changelog" | awk '{print $1}')
-    # Cut the file before the version to update to.
-    tail --lines=$(( $changelog_length - $update_version_line + 1 )) "$original_changelog" > "$temp_changelog"
-
-    # Get the length of the troncated changelog.
-    changelog_length=$(wc --lines "$temp_changelog" | awk '{print $1}')
-    # Get the line of the current version into the changelog
-    # Keep only the last line found
-    local current_version_line=$(grep --line-number "^## \[$current_version" "$temp_changelog" | cut -d':' -f1 | tail --lines=1)
-    # If there's no entry for this version into the changelog
-    # Get the last available version
-    if [ -z "$current_version_line" ]
-    then
-        current_version_line=$(grep --line-number "^##" "$original_changelog" | cut -d':' -f1 | tail --lines=1)
-    fi
-    # Cut the file before the current version.
-    # Then grep the previous version into the changelog to get the line number of the previous version
-    local previous_version_line=$(tail --lines=$(( $changelog_length - $current_version_line )) \
-        "$temp_changelog" | grep --max-count=1 --line-number "^## " | cut -d':' -f1)
-    # If there's no previous version into the changelog
-    # Go until the end of the changelog
-    if [ -z "$previous_version_line" ]
-    then
-        previous_version_line=$changelog_length
-    fi
-
-    # Cut the file after the previous version to keep only the changelog between the current version and the version to update to.
-    head --lines=$(( $current_version_line + $previous_version_line - 1 )) "$temp_changelog" | tee "$final_changelog"
-
-    if [ "$format" = "html" ]
-    then
-        # Replace markdown links by html links
-        ynh_replace --match="\[\(.*\)\](\(.*\)))" --replace="<a href=\"\2\">\1</a>)" --file="$final_changelog"
-        ynh_replace --match="\[\(.*\)\](\(.*\))" --replace="<a href=\"\2\">\1</a>" --file="$final_changelog"
-    elif [ "$format" = "plain" ]
-    then
-        # Change title format.
-        ynh_replace --match="^##.*\[\(.*\)\](\(.*\)) - \(.*\)$" --replace="## \1 (\3) - \2" --file="$final_changelog"
-        # Change modifications lines format.
-        ynh_replace --match="^\([-*]\).*\[\(.*\)\]\(.*\)" --replace="\1 \2 \3" --file="$final_changelog"
-    fi
-    # else markdown. As the file is already in markdown, nothing to do.
-
-    # Keep only important changes into the changelog
-    # Remove all minor changes
-    sed '/^-/d' "$final_changelog" > "${final_changelog}_lite"
-    # Remove all blank lines (to keep a clear workspace)
-    sed --in-place '/^$/d' "${final_changelog}_lite"
-    # Add a blank line at the end
-    echo "" >> "${final_changelog}_lite"
-
-    # Clean titles if there's no significative changes
-    local line
-    local previous_line=""
-    while read line <&3
-    do
-        if [ -n "$previous_line" ]
-        then
-            # Remove the line if it's a title or a blank line, and the previous one was a title as well.
-            if ( [ "${line:0:1}" = "#" ] || [ ${#line} -eq 0 ] ) && [ "${previous_line:0:1}" = "#" ]
-            then
-                ynh_replace_regex --match="${previous_line//[/.}" --replace="" --file="${final_changelog}_lite"
-            fi
-        fi
-        previous_line="$line"
-    done 3< "${final_changelog}_lite"
-
-    # Remove all blank lines again
-    sed --in-place '/^$/d' "${final_changelog}_lite"
-
-    # Restore changelog format with blank lines
-    ynh_replace --match="^##.*" --replace="\n\n&\n" --file="${final_changelog}_lite"
-    # Remove the 2 first blank lines
-    sed --in-place '1,2d' "${final_changelog}_lite"
-    # Add a blank line at the end
-    echo "" >> "${final_changelog}_lite"
-
-    # If changelog are empty, add an info
-    if [ $(wc --words "$final_changelog" | awk '{print $1}') -eq 0 ]
-    then
-        echo "No changes from the changelog..." > "$final_changelog"
-    fi
-    if [ $(wc --words "${final_changelog}_lite" | awk '{print $1}') -eq 0 ]
-    then
-        echo "No significative changes from the changelog..." > "${final_changelog}_lite"
-    fi
 }

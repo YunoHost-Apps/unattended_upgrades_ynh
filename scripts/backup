@@ -11,11 +11,11 @@ ynh_print_info "Declaring files to be backed up..."
 
 ynh_backup "$apticron_config"
 
-ynh_backup "$apticron_cron"
+ynh_backup "$apticron_daily_override"
 
 ynh_backup "$unattended_upgrades_config"
 
-ynh_backup "/etc/apt/apt.conf.d/02periodic"
+ynh_backup "$_02periodic_config"
 
 #=================================================
 # END OF SCRIPT

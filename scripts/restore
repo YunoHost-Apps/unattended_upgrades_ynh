@@ -9,11 +9,13 @@ source /usr/share/yunohost/helpers
 
 ynh_restore "$apticron_config"
 
-ynh_restore "$apticron_cron"
+ynh_restore "$apticron_daily_override"
 
 ynh_restore "$unattended_upgrades_config"
 
-ynh_restore "/etc/apt/apt.conf.d/02periodic"
+ynh_restore "$_02periodic_config"
+
+systemctl daemon-reload
 
 #=================================================
 # END OF SCRIPT
