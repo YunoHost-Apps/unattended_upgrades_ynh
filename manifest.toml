@@ -38,8 +38,8 @@ ram.runtime = "50M"
     default = "security_only"
 
     [install.ynh_update]
-    ask.en = "Would you like to update YunoHost packages automatically?"
-    ask.fr = "Souhaitez-vous mettre à jour les paquets YunoHost automatiquement ?"
+    ask.en = "Would you like to update YunoHost system packages automatically?"
+    ask.fr = "Souhaitez-vous mettre à jour les paquets YunoHost systèmes automatiquement ?"
     type = "boolean"
     default = true
 
